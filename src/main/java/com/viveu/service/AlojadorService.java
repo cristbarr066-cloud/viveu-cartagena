@@ -2,8 +2,10 @@ package com.viveu.service;
 
 import com.viveu.model.Alojador;
 import com.viveu.repository.AlojadorRepository;
+import com.viveu.repository.AlojamientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -12,6 +14,9 @@ public class AlojadorService {
 
     @Autowired
     private AlojadorRepository alojadorRepository;
+
+    @Autowired
+    private AlojamientoRepository alojamientoRepository;
 
     public Alojador registrar(Alojador alojador) {
         // Al registrarse, la cuenta queda en estado PENDIENTE esperando validación del Administrador
@@ -40,6 +45,28 @@ public class AlojadorService {
             alojador.setMotivoRechazo((motivo != null && !motivo.isBlank()) ? motivo.trim() : "Documentación o antecedentes no verificados satisfactoriamente.");
             return alojadorRepository.save(alojador);
         });
+    }
+
+    public Optional<Alojador> revocarAcceso(Long id, String motivo) {
+        return alojadorRepository.findById(id).map(alojador -> {
+            alojador.setEstadoVerificacion("DENEGADO");
+            alojador.setAntecedentesVerificados(false);
+            alojador.setFechaRevision(java.time.LocalDateTime.now());
+            alojador.setMotivoRechazo((motivo != null && !motivo.isBlank()) ? motivo.trim() : "Acceso y verificación revocados por la administración de ViveU.");
+            return alojadorRepository.save(alojador);
+        });
+    }
+
+    @Transactional
+    public boolean eliminarAlojador(Long id) {
+        if (id == null || !alojadorRepository.existsById(id)) {
+            return false;
+        }
+        // Eliminar las habitaciones asociadas publicadas por este alojador
+        alojamientoRepository.deleteByAlojadorId(id);
+        // Eliminar la cuenta del alojador
+        alojadorRepository.deleteById(id);
+        return true;
     }
 
     public java.util.List<Alojador> obtenerPendientes() {

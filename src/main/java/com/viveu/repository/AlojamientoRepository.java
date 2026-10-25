@@ -15,6 +15,8 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long> 
 
     List<Alojamiento> findByAlojadorId(Long alojadorId);
 
+    void deleteByAlojadorId(Long alojadorId);
+
     List<Alojamiento> findBySedeCercanaContainingIgnoreCase(String sede);
 
     List<Alojamiento> findByPrecioMensualLessThanEqual(Double precioMax);

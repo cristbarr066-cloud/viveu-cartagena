@@ -203,6 +203,12 @@
         <div th:if="${denegadoExito and waUrl == null}" style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
             ℹ️ La solicitud ha sido rechazada exitosamente.
         </div>
+        <div th:if="${revocadoExito}" style="background: #fffbeb; border: 1px solid #f59e0b; color: #b45309; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            ⛔ El acceso de este arrendador ha sido REVOCADO y su cuenta bloqueada para iniciar sesión y publicar.
+        </div>
+        <div th:if="${eliminadoExito}" style="background: #fef2f2; border: 1px solid #ef4444; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            🗑️ La cuenta del alojador y todas sus publicaciones asociadas han sido ELIMINADAS definitivamente del sistema.
+        </div>
 
         <!-- Métricas Rápidas -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
@@ -292,6 +298,12 @@
                                 onclick="abrirModalDenegar(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-tel'))">
                             ❌ Denegar
                         </button>
+
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='pendientes')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Deseas ELIMINAR definitivamente esta solicitud de ' + ${alojador.nombreCompleto} + '?\')'">
+                            <button type="submit" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 0.65rem 0.85rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer;" title="Eliminar registro">
+                                🗑️
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -372,13 +384,23 @@
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
                         <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.82rem;">
                             🛡️ Arrendador Verificado y Habilitado
                         </span>
                         <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20saludamos%20del%20equipo%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Escribir por WhatsApp">
                             💬 Contactar
                         </a>
+                        <form th:action="@{/admin/alojador/{id}/revocar(id=${alojador.id})}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Confirmas que deseas REVOCAR el acceso a ' + ${alojador.nombreCompleto} + '? Su cuenta quedará bloqueada para publicar y se le notificará por WhatsApp.\')'">
+                            <button type="submit" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                                ⛔ Revocar Acceso
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='aprobados')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'⚠️ ¿Estás seguro de que deseas ELIMINAR definitivamente la cuenta de ' + ${alojador.nombreCompleto} + '? Se borrará su acceso y todas sus habitaciones publicadas.\')'">
+                            <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                                🗑️ Eliminar
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -401,13 +423,18 @@
                             Documento: <span th:text="${alojador.numeroCedula}"></span> • Correo: <span th:text="${alojador.correo}"></span> • Tel: <span th:text="${alojador.telefonoWhatsapp}"></span>
                         </div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                         <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20de%20ViveU%20respecto%20a%20tu%20solicitud%20de%20arrendador.'" target="_blank" class="btn-whatsapp-direct">
                             💬 WhatsApp
                         </a>
                         <form th:action="@{/admin/alojador/{id}/reactivar(id=${alojador.id})}" method="post">
                             <button type="submit" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;" onclick="return confirm('¿Deseas reactivar y aprobar esta cuenta?')">
                                 🔄 Reconsiderar y Aprobar
+                            </button>
+                        </form>
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='denegados')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Deseas ELIMINAR definitivamente el registro de ' + ${alojador.nombreCompleto} + ' del sistema?\')'">
+                            <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
+                                🗑️ Eliminar
                             </button>
                         </form>
                     </div>

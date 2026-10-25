@@ -170,6 +170,48 @@ public class AdminController {
         return "redirect:/admin/panel?tab=denegados&aprobado=true";
     }
 
+    @PostMapping("/alojador/{id}/revocar")
+    public String revocarAcceso(@PathVariable Long id,
+                                @RequestParam(required = false) String motivo,
+                                HttpSession session,
+                                org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("adminLogueado") == null) {
+            return "redirect:/admin/login";
+        }
+        String motivoFinal = (motivo != null && !motivo.isBlank()) 
+                ? motivo.trim() 
+                : "Acceso y verificación revocados por la administración de ViveU.";
+        
+        java.util.Optional<Alojador> opt = alojadorService.revocarAcceso(id, motivoFinal);
+        if (opt.isPresent()) {
+            Alojador alojador = opt.get();
+            String tel = sanitizarTelefono(alojador.getTelefonoWhatsapp());
+            String msg = "Hola " + alojador.getNombreCompleto() + ". Te informamos que tu acceso de arrendador en ViveU Cartagena ha sido REVOCADO por la administración. Motivo: " + motivoFinal;
+            String encoded = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8);
+            String waUrl = "https://api.whatsapp.com/send?phone=" + tel + "&text=" + encoded;
+
+            redirectAttrs.addFlashAttribute("waUrl", waUrl);
+            redirectAttrs.addFlashAttribute("waNombre", alojador.getNombreCompleto());
+            redirectAttrs.addFlashAttribute("waTelefono", alojador.getTelefonoWhatsapp());
+            redirectAttrs.addFlashAttribute("waAccion", "denegado");
+        }
+        redirectAttrs.addFlashAttribute("revocadoExito", true);
+        return "redirect:/admin/panel?tab=aprobados";
+    }
+
+    @PostMapping("/alojador/{id}/eliminar")
+    public String eliminarAlojador(@PathVariable Long id,
+                                   @RequestParam(required = false, defaultValue = "aprobados") String tab,
+                                   HttpSession session,
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttrs) {
+        if (session.getAttribute("adminLogueado") == null) {
+            return "redirect:/admin/login";
+        }
+        alojadorService.eliminarAlojador(id);
+        redirectAttrs.addFlashAttribute("eliminadoExito", true);
+        return "redirect:/admin/panel?tab=" + tab;
+    }
+
     private String sanitizarTelefono(String raw) {
         if (raw == null) return "57";
         String digits = raw.replaceAll("[^0-9]", "");
