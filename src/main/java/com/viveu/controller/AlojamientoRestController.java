@@ -88,4 +88,16 @@ public class AlojamientoRestController {
 
         return resultado;
     }
+
+    /**
+     * Endpoint ligero para monitoreo y pings de keep-alive (cron-job.org)
+     * Responde de inmediato con estado 200 sin consumir recursos del servidor.
+     */
+    @GetMapping({"/health", "/ping"})
+    public ResponseEntity<Map<String, String>> healthCheck() {
+        Map<String, String> status = new HashMap<>();
+        status.put("status", "UP");
+        status.put("app", "ViveU-Cartagena");
+        return ResponseEntity.ok(status);
+    }
 }
