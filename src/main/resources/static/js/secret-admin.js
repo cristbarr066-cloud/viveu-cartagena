@@ -1,35 +1,61 @@
 // ViveU - Acceso Oculto al Panel Administrativo
-// Presionar el logo 4 veces consecutivas para acceder al portal de moderación
+// Presionar el logo 4 veces (sin límite de tiempo) para acceder al portal de moderación
 
 (function() {
-    let clickCount = 0;
-    let timer = null;
+    // Usamos sessionStorage para que el conteo no se pierda jamás
+    function obtenerConteo() {
+        return parseInt(sessionStorage.getItem('viveu_admin_clicks') || '0', 10);
+    }
+
+    function guardarConteo(num) {
+        sessionStorage.setItem('viveu_admin_clicks', num.toString());
+    }
 
     function activarDetectorLogo() {
-        const logos = document.querySelectorAll('.brand-logo-img, .navbar-brand-centered, .brand-logo');
+        // Seleccionamos tanto la imagen del logo como el enlace contenedor
+        const logoElementos = document.querySelectorAll('.brand-logo-img, .navbar-brand-centered, .brand-logo, a[href="/"], a[href="./"]');
         
-        logos.forEach(logo => {
-            logo.addEventListener('click', function(e) {
-                clickCount++;
-                clearTimeout(timer);
+        logoElementos.forEach(elemento => {
+            // Solo asociar a elementos que contengan el logo
+            if (!elemento.classList.contains('brand-logo-img') && 
+                !elemento.classList.contains('navbar-brand-centered') && 
+                !elemento.querySelector('.brand-logo-img')) {
+                return;
+            }
 
-                if (clickCount >= 4) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    clickCount = 0;
-                    
-                    // Efecto sutil visual al activar el acceso oculto
-                    document.body.style.transition = 'opacity 0.25s ease';
-                    document.body.style.opacity = '0.7';
-                    
+            elemento.addEventListener('click', function(e) {
+                // Siempre prevenir la recarga para que los clics se acumulen sin interrupciones
+                e.preventDefault();
+                e.stopPropagation();
+
+                let clicks = obtenerConteo() + 1;
+                guardarConteo(clicks);
+
+                // Micro-animación visual en el logo para que el usuario sienta el toque
+                const img = elemento.querySelector('img') || elemento;
+                if (img) {
+                    img.style.transition = 'transform 0.15s ease';
+                    img.style.transform = 'scale(0.88)';
+                    setTimeout(() => {
+                        img.style.transform = 'scale(1)';
+                    }, 150);
+                }
+
+                // Vibración táctil si el dispositivo móvil lo soporta
+                if (navigator.vibrate) {
+                    navigator.vibrate(40);
+                }
+
+                console.log("ViveU Secret Admin Click:", clicks, "/ 4");
+
+                if (clicks >= 4) {
+                    // Reiniciar el contador antes de redirigir
+                    guardarConteo(0);
+
+                    // Redirección inmediata al login secreto
                     window.location.href = '/admin/login';
                     return false;
                 }
-
-                // Resetear si no se alcanzan 4 clics en 2.2 segundos
-                timer = setTimeout(() => {
-                    clickCount = 0;
-                }, 2200);
             });
         });
     }
