@@ -122,15 +122,15 @@
             ⚠️ <span th:text="${errorMsg}"></span>
         </div>
 
-        <form th:action="@{/admin/login}" method="post" style="text-align: left;">
+        <form th:action="@{/admin/login}" method="post" style="text-align: left;" autocomplete="off">
             <div style="margin-bottom: 1.15rem;">
                 <label style="font-size: 0.82rem; font-weight: 600; color: #d4d4d8; text-transform: uppercase; letter-spacing: 0.04em;">Usuario Administrador</label>
-                <input type="text" name="usuario" required placeholder="admin" class="admin-input" autofocus>
+                <input type="text" name="usuario" required placeholder="admin" class="admin-input" autofocus autocomplete="off">
             </div>
 
             <div style="margin-bottom: 1.25rem;">
                 <label style="font-size: 0.82rem; font-weight: 600; color: #d4d4d8; text-transform: uppercase; letter-spacing: 0.04em;">Contraseña de Seguridad</label>
-                <input type="password" name="password" required placeholder="••••••••" class="admin-input">
+                <input type="password" name="password" required placeholder="••••••••" class="admin-input" autocomplete="new-password">
             </div>
 
             <button type="submit" class="admin-btn">
