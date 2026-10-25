@@ -97,31 +97,85 @@ public class AdminController {
     }
 
     @PostMapping("/alojador/{id}/aprobar")
-    public String aprobarSolicitud(@PathVariable Long id, HttpSession session) {
+    public String aprobarSolicitud(@PathVariable Long id, 
+                                   HttpSession session, 
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttrs) {
         if (session.getAttribute("adminLogueado") == null) {
             return "redirect:/admin/login";
         }
-        alojadorService.aprobarAlojador(id);
+        java.util.Optional<Alojador> opt = alojadorService.aprobarAlojador(id);
+        if (opt.isPresent()) {
+            Alojador alojador = opt.get();
+            String tel = sanitizarTelefono(alojador.getTelefonoWhatsapp());
+            String msg = "¡Hola " + alojador.getNombreCompleto() + "! 🎉 Tu cuenta de arrendador en ViveU Cartagena ha sido VERIFICADA Y APROBADA exitosamente.\n\nYa puedes ingresar con tu correo (" + alojador.getCorreo() + ") y comenzar a publicar tus habitaciones para los estudiantes de la Universidad de Cartagena: https://viveu-cartagena.onrender.com/login\n\n¡Bienvenido a ViveU Cartagena!";
+            String encoded = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8);
+            String waUrl = "https://api.whatsapp.com/send?phone=" + tel + "&text=" + encoded;
+
+            redirectAttrs.addFlashAttribute("waUrl", waUrl);
+            redirectAttrs.addFlashAttribute("waNombre", alojador.getNombreCompleto());
+            redirectAttrs.addFlashAttribute("waTelefono", alojador.getTelefonoWhatsapp());
+            redirectAttrs.addFlashAttribute("waAccion", "aprobado");
+        }
         return "redirect:/admin/panel?tab=pendientes&aprobado=true";
     }
 
     @PostMapping("/alojador/{id}/denegar")
     public String denegarSolicitud(@PathVariable Long id,
                                    @RequestParam(required = false) String motivo,
-                                   HttpSession session) {
+                                   HttpSession session,
+                                   org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttrs) {
         if (session.getAttribute("adminLogueado") == null) {
             return "redirect:/admin/login";
         }
-        alojadorService.denegarAlojador(id, motivo);
+        String motivoFinal = (motivo != null && !motivo.isBlank()) 
+                ? motivo.trim() 
+                : "La documentación adjunta o los datos de identidad no pudieron ser verificados satisfactoriamente.";
+        
+        java.util.Optional<Alojador> opt = alojadorService.denegarAlojador(id, motivoFinal);
+        if (opt.isPresent()) {
+            Alojador alojador = opt.get();
+            String tel = sanitizarTelefono(alojador.getTelefonoWhatsapp());
+            String msg = "Hola " + alojador.getNombreCompleto() + ". Te informamos desde ViveU Cartagena que tu solicitud de cuenta como arrendador no pudo ser aprobada en este momento.\n\nMotivo: " + motivoFinal + "\n\nSi deseas corregir tus documentos o comunicarte con nosotros, por favor responde a este mensaje. Atentamente, Equipo de Seguridad ViveU.";
+            String encoded = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8);
+            String waUrl = "https://api.whatsapp.com/send?phone=" + tel + "&text=" + encoded;
+
+            redirectAttrs.addFlashAttribute("waUrl", waUrl);
+            redirectAttrs.addFlashAttribute("waNombre", alojador.getNombreCompleto());
+            redirectAttrs.addFlashAttribute("waTelefono", alojador.getTelefonoWhatsapp());
+            redirectAttrs.addFlashAttribute("waAccion", "denegado");
+        }
         return "redirect:/admin/panel?tab=pendientes&denegado=true";
     }
 
     @PostMapping("/alojador/{id}/reactivar")
-    public String reactivarSolicitud(@PathVariable Long id, HttpSession session) {
+    public String reactivarSolicitud(@PathVariable Long id, 
+                                     HttpSession session,
+                                     org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttrs) {
         if (session.getAttribute("adminLogueado") == null) {
             return "redirect:/admin/login";
         }
-        alojadorService.aprobarAlojador(id);
+        java.util.Optional<Alojador> opt = alojadorService.aprobarAlojador(id);
+        if (opt.isPresent()) {
+            Alojador alojador = opt.get();
+            String tel = sanitizarTelefono(alojador.getTelefonoWhatsapp());
+            String msg = "¡Hola " + alojador.getNombreCompleto() + "! 🎉 Tu cuenta en ViveU Cartagena ha sido reactivada y APROBADA exitosamente. Ya puedes ingresar: https://viveu-cartagena.onrender.com/login";
+            String encoded = java.net.URLEncoder.encode(msg, java.nio.charset.StandardCharsets.UTF_8);
+            String waUrl = "https://api.whatsapp.com/send?phone=" + tel + "&text=" + encoded;
+
+            redirectAttrs.addFlashAttribute("waUrl", waUrl);
+            redirectAttrs.addFlashAttribute("waNombre", alojador.getNombreCompleto());
+            redirectAttrs.addFlashAttribute("waTelefono", alojador.getTelefonoWhatsapp());
+            redirectAttrs.addFlashAttribute("waAccion", "aprobado");
+        }
         return "redirect:/admin/panel?tab=denegados&aprobado=true";
+    }
+
+    private String sanitizarTelefono(String raw) {
+        if (raw == null) return "57";
+        String digits = raw.replaceAll("[^0-9]", "");
+        if (digits.length() == 10 && digits.startsWith("3")) {
+            return "57" + digits; // Prefijo Colombia
+        }
+        return digits;
     }
 }

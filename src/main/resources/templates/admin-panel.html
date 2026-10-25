@@ -24,6 +24,8 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         .admin-stat-card {
             background: #ffffff;
@@ -68,17 +70,19 @@
             border-color: #c4b5fd;
         }
         .img-preview-thumb {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 120px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
             cursor: pointer;
             transition: transform 0.2s, border-color 0.2s;
+            background: #e2e8f0;
         }
         .img-preview-thumb:hover {
             transform: scale(1.04);
             border-color: #7c3aed;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
         }
         .btn-aprobar {
             background: #10b981;
@@ -92,10 +96,11 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
         .btn-aprobar:hover {
             background: #059669;
+            transform: translateY(-1px);
         }
         .btn-denegar {
             background: #ef4444;
@@ -109,10 +114,29 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
         .btn-denegar:hover {
             background: #dc2626;
+            transform: translateY(-1px);
+        }
+        .btn-whatsapp-direct {
+            background: #25d366;
+            color: #ffffff;
+            border: none;
+            padding: 0.45rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: background 0.2s;
+        }
+        .btn-whatsapp-direct:hover {
+            background: #1eb857;
         }
     </style>
 </head>
@@ -134,7 +158,7 @@
             </div>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
             <span style="font-size: 0.82rem; background: rgba(124, 58, 237, 0.2); color: #c084fc; padding: 0.35rem 0.75rem; border-radius: 9999px; font-weight: 600; border: 1px solid rgba(168, 85, 247, 0.3);">
                 🛡️ Administrador Activo
             </span>
@@ -149,12 +173,35 @@
 
     <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
 
-        <!-- Mensajes de éxito -->
-        <div th:if="${aprobadoExito}" style="background: #ecfdf5; border: 1px solid #34d399; color: #065f46; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-            ✅ La cuenta del alojador ha sido APROBADA exitosamente. Ya puede iniciar sesión y publicar habitaciones.
+        <!-- BANNER WHATSAPP: Aparece cuando se aprueba o deniega una cuenta -->
+        <div th:if="${waUrl}" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 2px solid #10b981; border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="background: #10b981; color: #ffffff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+                        💬
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; color: #065f46; font-size: 1.15rem; font-weight: 800;">
+                            ¡Mensaje Oficial de WhatsApp Listo para Enviar!
+                        </h3>
+                        <p style="margin: 0.25rem 0 0; color: #047857; font-size: 0.88rem;">
+                            Destinatario: <strong th:text="${waNombre}">Alojador</strong> (<span th:text="${waTelefono}">+57</span>) • 
+                            Estado: <strong th:text="${waAccion == 'aprobado' ? 'Aprobado y Habilitado' : 'Denegado'}"></strong>
+                        </p>
+                    </div>
+                </div>
+                <a th:href="${waUrl}" target="_blank" id="btnAutoWhatsApp" style="background: #25d366; color: #ffffff; text-decoration: none; padding: 0.8rem 1.5rem; border-radius: 10px; font-weight: 800; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                    <span>📲</span> Abrir WhatsApp y Enviar Notificación
+                </a>
+            </div>
         </div>
-        <div th:if="${denegadoExito}" style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-            ℹ️ La solicitud ha sido rechazada. Se le notificará al postulante si intenta ingresar.
+
+        <!-- Mensajes de Estado del Sistema -->
+        <div th:if="${aprobadoExito and waUrl == null}" style="background: #ecfdf5; border: 1px solid #34d399; color: #065f46; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            ✅ La cuenta del alojador ha sido APROBADA exitosamente.
+        </div>
+        <div th:if="${denegadoExito and waUrl == null}" style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            ℹ️ La solicitud ha sido rechazada exitosamente.
         </div>
 
         <!-- Métricas Rápidas -->
@@ -193,7 +240,7 @@
         </div>
 
         <!-- Pestañas de Navegación -->
-        <div style="border-bottom: 2px solid #e2e8f0; margin-bottom: 2rem; display: flex; gap: 0.5rem;">
+        <div style="border-bottom: 2px solid #e2e8f0; margin-bottom: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <a th:href="@{/admin/panel(tab='pendientes')}" class="tab-btn" th:classappend="${activeTab == 'pendientes' ? 'active' : ''}">
                 ⏳ Por Validar
                 <span style="background: #fef3c7; color: #92400e; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;" th:text="${countPendientes}">0</span>
@@ -219,7 +266,7 @@
             <div th:each="alojador : ${pendientes}" class="solicitud-card">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
                     <div>
-                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
                             <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;" th:text="${alojador.nombreCompleto}">Nombre del Alojador</h2>
                             <span style="background: #fef3c7; color: #92400e; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
                                 ⏳ Pendiente de Validación
@@ -231,14 +278,18 @@
                     </div>
 
                     <!-- Botones de Acción Inmediata -->
-                    <div style="display: flex; gap: 0.75rem;">
-                        <form th:action="@{/admin/alojador/{id}/aprobar(id=${alojador.id})}" method="post">
-                            <button type="submit" class="btn-aprobar" onclick="return confirm('¿Confirmas que validaste la identidad y deseas APROBAR esta cuenta?')">
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <form th:action="@{/admin/alojador/{id}/aprobar(id=${alojador.id})}" method="post" onsubmit="this.querySelector('button').innerText='⏳ Aprobando...'">
+                            <button type="submit" class="btn-aprobar">
                                 ✅ Aprobar Cuenta
                             </button>
                         </form>
 
-                        <button type="button" class="btn-denegar" th:onclick="'mostrarRechazo(' + ${alojador.id} + ')'">
+                        <button type="button" class="btn-denegar" 
+                                th:data-id="${alojador.id}"
+                                th:data-nombre="${alojador.nombreCompleto}"
+                                th:data-tel="${alojador.telefonoWhatsapp}"
+                                onclick="abrirModalDenegar(this.getAttribute('data-id'), this.getAttribute('data-nombre'), this.getAttribute('data-tel'))">
                             ❌ Denegar
                         </button>
                     </div>
@@ -256,10 +307,11 @@
                             <div><strong>Tipo de Documento:</strong> <span th:text="${alojador.tipoDocumento}">Cédula</span></div>
                             <div><strong>Número de Documento:</strong> <code style="background: #ffffff; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; color: #0f172a;" th:text="${alojador.numeroCedula}">45892104</code></div>
                             <div><strong>Correo:</strong> <span th:text="${alojador.correo}">correo@ejemplo.com</span></div>
-                            <div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
                                 <strong>WhatsApp:</strong> 
-                                <a th:href="'https://wa.me/' + ${alojador.telefonoWhatsapp}" target="_blank" style="color: #059669; font-weight: 600; text-decoration: none;">
-                                    <span th:text="${alojador.telefonoWhatsapp}">+57 300 000 0000</span> 💬
+                                <span th:text="${alojador.telefonoWhatsapp}">+57 300 000 0000</span>
+                                <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20desde%20la%20administración%20de%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Abrir chat">
+                                    💬 Chatear
                                 </a>
                             </div>
                             <div><strong>Dirección en Cartagena:</strong> <span th:text="${alojador.direccionResidencia}">Barrio Zaragocilla</span></div>
@@ -275,38 +327,28 @@
                     <!-- Documentación Visual: Foto Rostro y Cédula -->
                     <div>
                         <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #7c3aed; font-weight: 800; margin-bottom: 0.75rem;">
-                            🔍 Documentación Subida (Haz clic para ampliar)
+                            🔍 Documentación Subida (Haz clic en la foto para ampliar)
                         </h4>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                             <div>
-                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">Foto / Selfie Rostro:</div>
-                                <img th:src="${alojador.fotoRostroUrl}" alt="Foto Rostro" class="img-preview-thumb" th:onclick="'abrirModalFoto(\'' + ${alojador.fotoRostroUrl} + '\', \'Foto de Rostro: ' + ${alojador.nombreCompleto} + '\')'">
+                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">📸 Foto Rostro / Selfie:</div>
+                                <img th:src="${alojador.fotoRostroUrl != null && !#strings.isEmpty(alojador.fotoRostroUrl) ? alojador.fotoRostroUrl : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'}" 
+                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';"
+                                     alt="Foto Rostro" class="img-preview-thumb" 
+                                     th:data-nombre="${alojador.nombreCompleto}"
+                                     onclick="abrirModalFoto(this.src, 'Foto de Rostro: ' + this.getAttribute('data-nombre'))">
                             </div>
                             <div>
-                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">Cédula de Ciudadanía:</div>
-                                <img th:src="${alojador.fotoCedulaUrl}" alt="Foto Cédula" class="img-preview-thumb" th:onclick="'abrirModalFoto(\'' + ${alojador.fotoCedulaUrl} + '\', \'Cédula de: ' + ${alojador.nombreCompleto} + '\')'">
+                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">🪪 Foto Cédula (Frente):</div>
+                                <img th:src="${alojador.fotoCedulaUrl != null && !#strings.isEmpty(alojador.fotoCedulaUrl) ? alojador.fotoCedulaUrl : 'https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80'}" 
+                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80';"
+                                     alt="Foto Cédula" class="img-preview-thumb" 
+                                     th:data-nombre="${alojador.nombreCompleto}"
+                                     onclick="abrirModalFoto(this.src, 'Cédula de: ' + this.getAttribute('data-nombre'))">
                             </div>
                         </div>
                     </div>
 
-                </div>
-
-                <!-- Formulario desplegable para Denegar con motivo -->
-                <div th:id="'form-rechazo-' + ${alojador.id}" style="display: none; margin-top: 1rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 1rem;">
-                    <form th:action="@{/admin/alojador/{id}/denegar(id=${alojador.id})}" method="post">
-                        <label style="font-size: 0.85rem; font-weight: 700; color: #9f1239; display: block; margin-bottom: 0.4rem;">
-                            Motivo del rechazo de la cuenta:
-                        </label>
-                        <input type="text" name="motivo" placeholder="Ej: La foto de la cédula es borrosa o no coincide con los datos ingresados." class="form-input" style="margin-bottom: 0.75rem;" required>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button type="submit" class="btn-denegar" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
-                                Confirmar Denegación
-                            </button>
-                            <button type="button" class="btn-outline" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;" th:onclick="'ocultarRechazo(' + ${alojador.id} + ')'">
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -320,7 +362,9 @@
             <div th:each="alojador : ${aprobados}" class="solicitud-card" style="border-left: 4px solid #10b981;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                     <div style="display: flex; align-items: center; gap: 1rem;">
-                        <img th:src="${alojador.fotoRostroUrl}" alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #10b981;">
+                        <img th:src="${alojador.fotoRostroUrl != null && !#strings.isEmpty(alojador.fotoRostroUrl) ? alojador.fotoRostroUrl : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'}" 
+                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80';"
+                             alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #10b981;">
                         <div>
                             <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a;" th:text="${alojador.nombreCompleto}">Nombre</div>
                             <div style="font-size: 0.82rem; color: #64748b;">
@@ -328,10 +372,13 @@
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.82rem;">
                             🛡️ Arrendador Verificado y Habilitado
                         </span>
+                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20saludamos%20del%20equipo%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Escribir por WhatsApp">
+                            💬 Contactar
+                        </a>
                     </div>
                 </div>
             </div>
@@ -351,10 +398,13 @@
                             <strong>Motivo de rechazo:</strong> <span th:text="${alojador.motivoRechazo}">Motivo</span>
                         </div>
                         <div style="font-size: 0.78rem; color: #64748b; margin-top: 0.2rem;">
-                            Documento: <span th:text="${alojador.numeroCedula}"></span> • Correo: <span th:text="${alojador.correo}"></span>
+                            Documento: <span th:text="${alojador.numeroCedula}"></span> • Correo: <span th:text="${alojador.correo}"></span> • Tel: <span th:text="${alojador.telefonoWhatsapp}"></span>
                         </div>
                     </div>
-                    <div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20de%20ViveU%20respecto%20a%20tu%20solicitud%20de%20arrendador.'" target="_blank" class="btn-whatsapp-direct">
+                            💬 WhatsApp
+                        </a>
                         <form th:action="@{/admin/alojador/{id}/reactivar(id=${alojador.id})}" method="post">
                             <button type="submit" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;" onclick="return confirm('¿Deseas reactivar y aprobar esta cuenta?')">
                                 🔄 Reconsiderar y Aprobar
@@ -367,35 +417,116 @@
 
     </main>
 
-    <!-- Modal para Inspeccionar Fotos en Tamaño Completo -->
-    <div id="modalVisorFoto" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem;">
-        <div style="background: #ffffff; border-radius: 16px; max-width: 700px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-            <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
-                <strong id="modalTituloFoto" style="color: #0f172a; font-size: 1rem;">Documento de Verificación</strong>
-                <button onclick="cerrarModalFoto()" style="background: #f1f5f9; border: none; font-size: 1.25rem; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+    <!-- MODAL DENEGAR SOLICITUD (Con motivos predefinidos y WhatsApp) -->
+    <div id="modalDenegarBox" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem;">
+        <div style="background: #ffffff; border-radius: 18px; max-width: 520px; width: 100%; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); overflow: hidden; animation: popIn 0.2s ease;">
+            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff1f2;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.3rem;">❌</span>
+                    <strong style="color: #9f1239; font-size: 1.05rem;">Denegar Solicitud de Alojador</strong>
+                </div>
+                <button onclick="cerrarModalDenegar()" style="background: none; border: none; font-size: 1.3rem; color: #9f1239; cursor: pointer;">✕</button>
             </div>
-            <div style="padding: 1.25rem; text-align: center; background: #09090b;">
-                <img id="modalImgTag" src="" alt="Documento" style="max-height: 70vh; max-width: 100%; object-fit: contain; border-radius: 8px;">
+
+            <form id="formDenegarAlojador" method="post" style="padding: 1.5rem;">
+                <p style="font-size: 0.9rem; color: #334155; margin-top: 0; margin-bottom: 1rem;">
+                    Postulante: <strong id="modalDenegarNombre">Nombre</strong>
+                </p>
+
+                <label style="font-size: 0.82rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.5rem; text-transform: uppercase;">
+                    Selecciona o escribe el motivo del rechazo:
+                </label>
+
+                <!-- Motivos Rápidos -->
+                <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; font-size: 0.85rem;">
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                        <input type="radio" name="motivoPreset" value="Las fotos de la cédula o selfie son borrosas o no legibles." onchange="actualizarInputMotivo(this.value)" checked>
+                        <span>Cédula o selfie borrosa / ilegible</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                        <input type="radio" name="motivoPreset" value="Los datos personales registrados no coinciden con el documento de identidad suministrado." onchange="actualizarInputMotivo(this.value)">
+                        <span>Datos no coinciden con el documento</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                        <input type="radio" name="motivoPreset" value="No cumple con los requisitos de seguridad o convivencia exigidos por ViveU." onchange="actualizarInputMotivo(this.value)">
+                        <span>No cumple políticas de seguridad estudiantil</span>
+                    </label>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 1.25rem;">
+                    <label class="filter-label">Detalle del motivo (se le notificará al postulante):</label>
+                    <input type="text" id="inputMotivoTexto" name="motivo" class="form-input" 
+                           value="Las fotos de la cédula o selfie son borrosas o no legibles." required>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn-outline" onclick="cerrarModalDenegar()">Cancelar</button>
+                    <button type="submit" class="btn-denegar" id="btnConfirmarDenegacion">
+                        ❌ Confirmar Rechazo y Preparar WhatsApp
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARA INSPECCIONAR FOTOS EN TAMAÑO COMPLETO -->
+    <div id="modalVisorFoto" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1.5rem;" onclick="cerrarModalFoto()">
+        <div style="background: #ffffff; border-radius: 16px; max-width: 750px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+            <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: #ffffff;">
+                <strong id="modalTituloFoto" style="font-size: 1rem;">Documento de Verificación</strong>
+                <button onclick="cerrarModalFoto()" style="background: #334155; color: #fff; border: none; font-size: 1.1rem; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+            </div>
+            <div style="padding: 1.5rem; text-align: center; background: #09090b;">
+                <img id="modalImgTag" src="" alt="Documento" style="max-height: 70vh; max-width: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
             </div>
         </div>
     </div>
 
     <script>
-        function mostrarRechazo(id) {
-            document.getElementById('form-rechazo-' + id).style.display = 'block';
+        function abrirModalDenegar(id, nombre, tel) {
+            document.getElementById('formDenegarAlojador').action = '/admin/alojador/' + id + '/denegar';
+            document.getElementById('modalDenegarNombre').textContent = nombre + ' (' + tel + ')';
+            document.getElementById('modalDenegarBox').style.display = 'flex';
         }
-        function ocultarRechazo(id) {
-            document.getElementById('form-rechazo-' + id).style.display = 'none';
+
+        function cerrarModalDenegar() {
+            document.getElementById('modalDenegarBox').style.display = 'none';
         }
+
+        function actualizarInputMotivo(val) {
+            document.getElementById('inputMotivoTexto').value = val;
+        }
+
+        document.getElementById('formDenegarAlojador')?.addEventListener('submit', function() {
+            const btn = document.getElementById('btnConfirmarDenegacion');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = '⏳ Procesando Denegación...';
+            }
+        });
+
         function abrirModalFoto(src, titulo) {
+            if (!src) return;
             document.getElementById('modalImgTag').src = src;
-            document.getElementById('modalTituloFoto').textContent = titulo;
+            document.getElementById('modalTituloFoto').textContent = titulo || 'Documento de Identidad';
             const modal = document.getElementById('modalVisorFoto');
             modal.style.display = 'flex';
         }
+
         function cerrarModalFoto() {
             document.getElementById('modalVisorFoto').style.display = 'none';
         }
+
+        // Si se acaba de aprobar o denegar con WhatsApp, abrir automáticamente la ventana de chat
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnWA = document.getElementById('btnAutoWhatsApp');
+            if (btnWA && btnWA.href) {
+                // Pequeño timeout para no ser bloqueado por el bloqueador de popups
+                setTimeout(() => {
+                    window.open(btnWA.href, '_blank');
+                }, 400);
+            }
+        });
     </script>
 </body>
 </html>

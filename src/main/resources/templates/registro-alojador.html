@@ -187,14 +187,57 @@
     <script>
         function cargarPreview(input, idImgPreview, idInputHidden) {
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const previewElement = document.getElementById(idImgPreview);
+                previewElement.style.opacity = '0.5';
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById(idImgPreview).src = e.target.result;
-                    document.getElementById(idInputHidden).value = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
+                    const img = new Image();
+                    img.onload = function() {
+                        // Redimensionar manteniendo aspecto (máximo 1000px para nitidez de cédula y rostro)
+                        const maxDim = 1000;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxDim || height > maxDim) {
+                            if (width > height) {
+                                height = Math.round((height * maxDim) / width);
+                                width = maxDim;
+                            } else {
+                                width = Math.round((width * maxDim) / height);
+                                height = maxDim;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Comprime a JPEG de alta nitidez y peso ultra-ligero (~80 KB en vez de 10 MB)
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+                        previewElement.src = compressedDataUrl;
+                        previewElement.style.opacity = '1';
+                        document.getElementById(idInputHidden).value = compressedDataUrl;
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             }
         }
+
+        // Indicador visual de envío rápido
+        document.querySelector('form')?.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ Enviando y Verificando Documentos...';
+                btn.style.opacity = '0.8';
+            }
+        });
     </script>
     <script th:src="@{/js/secret-admin.js}"></script>
 </body>
