@@ -178,7 +178,7 @@ public class DataInitializer {
             Alojamiento a5 = new Alojamiento(
                 "Cuarto Compartido Doble Ultra-Económico en Pie de la Popa",
                 "Solución pensada para estudiantes con presupuesto ajustado que deseen compartir gastos. Incluye dos camas individuales, dos escritorios, ventilador de techo y servicios públicos incluidos. A 1 ruta de Transcaribe a Zaragocilla y Piedra de Bolívar.",
-                500000.0,
+                300000.0,
                 "Pie de la Popa",
                 "Sede Zaragocilla (Salud)",
                 12,
@@ -195,7 +195,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80",
                 "Marta Lucía De Ávila",
                 "+57 300 912 3345",
-                "Precio por persona ($500.000 COP c/u). Ideal para compañeros que vengan del mismo municipio.",
+                "Precio por persona ($300.000 COP c/u). Ideal para compañeros que vengan del mismo municipio.",
                 4.6
             );
             a5.setDireccion("Calle 30 # 21-35, Pie de la Popa");
