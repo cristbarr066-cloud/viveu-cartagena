@@ -215,7 +215,8 @@
                     <div class="card-footer">
                         <label class="compare-btn-checkbox">
                             <input type="checkbox" class="compare-checkbox" th:value="${a.id}" 
-                                   th:data-img="${a.imagenUrl}">
+                                   th:data-img="${a.imagenUrl}"
+                                   onchange="handleCompararCheck(this)">
                             Comparar
                         </label>
                         <button class="btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;" 
@@ -292,7 +293,7 @@
         </div>
         <div style="display: flex; gap: 0.75rem;">
             <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="limpiarComparador()">Limpiar</button>
-            <button class="btn-primary" id="btnAbrirComparador">Comparar en Paralelo</button>
+            <button class="btn-primary" id="btnAbrirComparador" onclick="abrirModalComparar()">Comparar en Paralelo</button>
         </div>
     </div>
 

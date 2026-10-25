@@ -192,9 +192,11 @@ function resetearFiltros() {
 }
 
 // Lógica de Comparador Flotante
-function handleCompararCheck(inputElement) {
+function handleCompararCheck(param) {
+    const inputElement = (param && param.target) ? param.target : param;
+    if (!inputElement || inputElement.value === undefined) return;
+
     const id = String(inputElement.value);
-    const imgSrc = inputElement.getAttribute('data-img');
 
     if (inputElement.checked) {
         if (seleccionComparar.size >= 3) {
@@ -214,21 +216,35 @@ function actualizarBarraComparar() {
     const bar = document.getElementById('floatingCompareBar');
     const chipsCont = document.getElementById('compareChips');
     const countLabel = document.getElementById('compareCount');
+    const btnAbrir = document.getElementById('btnAbrirComparador');
 
     if (!bar) return;
 
     if (seleccionComparar.size > 0) {
         bar.classList.add('show');
-        countLabel.textContent = `${seleccionComparar.size} seleccionado${seleccionComparar.size > 1 ? 's' : ''}`;
+        if (countLabel) {
+            countLabel.textContent = `${seleccionComparar.size} seleccionado${seleccionComparar.size > 1 ? 's' : ''}`;
+        }
         
+        if (btnAbrir) {
+            btnAbrir.textContent = seleccionComparar.size > 1 
+                ? `Comparar Ahora (${seleccionComparar.size})` 
+                : 'Comparar (Elige al menos 2)';
+        }
+
         // Renderizar chips con miniaturas
-        chipsCont.innerHTML = Array.from(seleccionComparar).map(id => {
-            const cb = document.querySelector(`.compare-checkbox[value="${id}"]`);
-            const img = cb ? cb.getAttribute('data-img') : '';
-            return `<div class="compare-chip"><img src="${img}" alt="habitación"></div>`;
-        }).join('');
+        if (chipsCont) {
+            chipsCont.innerHTML = Array.from(seleccionComparar).map(id => {
+                const cb = document.querySelector(`.compare-checkbox[value="${id}"]`);
+                const img = cb ? (cb.getAttribute('data-img') || '') : '';
+                return `<div class="compare-chip" title="Alojamiento seleccionado">${img ? `<img src="${img}" alt="habitación" style="width: 100%; height: 100%; object-fit: cover;">` : '🛏️'}</div>`;
+            }).join('');
+        }
     } else {
         bar.classList.remove('show');
+        if (btnAbrir) {
+            btnAbrir.textContent = 'Comparar en Paralelo';
+        }
     }
 }
 
@@ -239,7 +255,15 @@ function limpiarComparador() {
 }
 
 async function abrirModalComparar() {
-    if (seleccionComparar.size === 0) return;
+    if (seleccionComparar.size === 0) {
+        alert("Selecciona al menos una habitación marcando la casilla 'Comparar'.");
+        return;
+    }
+
+    if (seleccionComparar.size === 1) {
+        alert("Por favor selecciona al menos 2 habitaciones para poder compararlas lado a lado.");
+        return;
+    }
 
     const ids = Array.from(seleccionComparar).map(Number);
     try {
@@ -248,16 +272,30 @@ async function abrirModalComparar() {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(ids)
         });
+        
+        if (!res.ok) throw new Error("Error en la respuesta del servidor");
         const items = await res.json();
+        
+        const modalTitle = document.querySelector('#modalComparador .modal-title');
+        if (modalTitle) {
+            modalTitle.innerHTML = '<span>⚖️</span> Comparación Inteligente ViveU';
+        }
+
         renderizarTablaComparativa(items);
         document.getElementById('modalComparador').classList.add('active');
     } catch (e) {
         console.error("Error al comparar", e);
+        alert("No se pudieron cargar los datos de comparación. Por favor intenta nuevamente.");
     }
 }
 
 function cerrarModalComparar() {
-    document.getElementById('modalComparador').classList.remove('active');
+    const modal = document.getElementById('modalComparador');
+    if (modal) modal.classList.remove('active');
+    if (mapaDetalleInstancia) {
+        mapaDetalleInstancia.remove();
+        mapaDetalleInstancia = null;
+    }
 }
 
 function renderizarTablaComparativa(items) {
@@ -316,9 +354,9 @@ function renderizarTablaComparativa(items) {
                     <th>Contacto Directo</th>
                     ${items.map(i => `
                         <td>
-                            <a href="https://wa.me/${i.telefonoContacto.replace(/[^0-9]/g, '')}?text=Hola,%20vi%20tu%20habitaci%C3%B3n%20en%20ViveU" 
-                               target="_blank" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.8rem;">
-                               💬 WhatsApp Propietario
+                            <a href="https://wa.me/${(i.telefonoContacto || '573000000000').replace(/[^0-9]/g, '')}?text=Hola,%20vi%20tu%20habitaci%C3%B3n%20en%20ViveU" 
+                               target="_blank" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                               💬 WhatsApp
                             </a>
                         </td>
                     `).join('')}
@@ -340,6 +378,10 @@ const SEDES_COORD_MAP = {
 };
 
 async function verDetalleAlojamiento(id) {
+    const modalTitle = document.querySelector('#modalComparador .modal-title');
+    if (modalTitle) {
+        modalTitle.innerHTML = '<span>🏠</span> Detalle de la Habitación';
+    }
     try {
         const res = await fetch(`/api/alojamientos/${id}`);
         const a = await res.json();
