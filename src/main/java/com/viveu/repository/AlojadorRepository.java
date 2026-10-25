@@ -14,4 +14,10 @@ public interface AlojadorRepository extends JpaRepository<Alojador, Long> {
     boolean existsByCorreoIgnoreCase(String correo);
 
     boolean existsByNumeroCedula(String numeroCedula);
+
+    java.util.List<Alojador> findByEstadoVerificacionOrderByFechaRegistroDesc(String estadoVerificacion);
+
+    java.util.List<Alojador> findAllByOrderByFechaRegistroDesc();
+
+    long countByEstadoVerificacion(String estadoVerificacion);
 }

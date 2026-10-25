@@ -83,13 +83,11 @@ public class AlojamientoController {
             nuevoAlojador.setFotoCedulaUrl("https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80");
         }
 
-        // Guardar con verificación aprobada
-        Alojador guardado = alojadorService.registrar(nuevoAlojador);
+        // Guardar en estado PENDIENTE esperando validación del Administrador
+        alojadorService.registrar(nuevoAlojador);
         
-        // Iniciar sesión automáticamente
-        session.setAttribute("alojadorLogueado", guardado);
-
-        return "redirect:/publicar?bienvenido=true";
+        // NO se inicia sesión: debe esperar aprobación del Admin
+        return "redirect:/login?registroPendiente=true";
     }
 
     // ==========================================
@@ -98,13 +96,24 @@ public class AlojamientoController {
     @GetMapping("/login")
     public String mostrarLogin(@RequestParam(required = false) String necesitaCuenta,
                                @RequestParam(required = false) String error,
+                               @RequestParam(required = false) String registroPendiente,
+                               @RequestParam(required = false) String estado,
                                HttpSession session,
                                Model model) {
         if (session.getAttribute("alojadorLogueado") != null) {
             return "redirect:/mis-alojamientos";
         }
+        if (registroPendiente != null) {
+            model.addAttribute("successMsg", "¡Registro enviado con éxito! Tu solicitud está en proceso de validación por el equipo de seguridad de ViveU. Verificaremos tu documento y antecedentes antes de habilitar tu acceso.");
+        }
         if (necesitaCuenta != null) {
-            model.addAttribute("infoMsg", "Para publicar alojamientos debes iniciar sesión o registrarte como arrendador verificado.");
+            model.addAttribute("infoMsg", "Para publicar alojamientos debes iniciar sesión con una cuenta de arrendador aprobada.");
+        }
+        if ("pendiente".equalsIgnoreCase(estado)) {
+            model.addAttribute("warningMsg", "Tu cuenta aún se encuentra en revisión. Nuestro equipo está validando tu documento y foto. Te notificaremos cuando esté activa.");
+        }
+        if ("denegado".equalsIgnoreCase(estado)) {
+            model.addAttribute("errorMsg", "Tu solicitud de cuenta no fue admitida por no cumplir con los requisitos de verificación o seguridad estudiantil.");
         }
         if (error != null) {
             model.addAttribute("errorMsg", "Correo electrónico o contraseña incorrectos. Verifica tus datos.");
@@ -119,8 +128,15 @@ public class AlojamientoController {
                                 Model model) {
         Optional<Alojador> auth = alojadorService.autenticar(correo, password);
         if (auth.isPresent()) {
-            session.setAttribute("alojadorLogueado", auth.get());
-            return "redirect:/publicar";
+            Alojador alojador = auth.get();
+            if (alojador.isAprobado()) {
+                session.setAttribute("alojadorLogueado", alojador);
+                return "redirect:/mis-alojamientos";
+            } else if (alojador.isPendiente()) {
+                return "redirect:/login?estado=pendiente";
+            } else {
+                return "redirect:/login?estado=denegado";
+            }
         } else {
             return "redirect:/login?error=true";
         }

@@ -30,8 +30,41 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80",
                 "Calle 30 # 50-25, Barrio Zaragocilla, Cartagena"
             );
+            rosalba.setEstadoVerificacion("APROBADO");
+            rosalba.setAntecedentesVerificados(true);
             rosalba = alojadorRepository.save(rosalba);
             Long idRosalba = rosalba.getId();
+
+            // Solicitudes pendientes de prueba para validar en el Panel de Administración
+            Alojador carlos = new Alojador(
+                "Carlos Eduardo Miranda",
+                "carlos.miranda@gmail.com",
+                "carlos2026",
+                "+57 301 789 4421",
+                "Cédula de Ciudadanía",
+                "73194852",
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+                "https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80",
+                "Diagonal 32 # 45-12, Los Cerros, Cartagena"
+            );
+            carlos.setEstadoVerificacion("PENDIENTE");
+            carlos.setAntecedentesVerificados(false);
+            alojadorRepository.save(carlos);
+
+            Alojador marta = new Alojador(
+                "Marta Lucía Gómez",
+                "marta.gomez@gmail.com",
+                "marta123",
+                "+57 318 632 9901",
+                "Cédula de Ciudadanía",
+                "33215874",
+                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+                "https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80",
+                "Calle 15 # 24-88, Pie de la Popa, Cartagena"
+            );
+            marta.setEstadoVerificacion("PENDIENTE");
+            marta.setAntecedentesVerificados(false);
+            alojadorRepository.save(marta);
 
             Alojamiento a1 = new Alojamiento(
                 "Habitación Estudiantil a 4 min de Medicina Zaragocilla",

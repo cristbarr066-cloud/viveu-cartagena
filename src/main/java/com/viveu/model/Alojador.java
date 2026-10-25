@@ -43,7 +43,11 @@ public class Alojador {
 
     private Boolean aceptaTerminosConvivencia = true;
 
-    private String estadoVerificacion = "VERIFICADO"; // VERIFICADO, EN_REVISION
+    private String estadoVerificacion = "PENDIENTE"; // PENDIENTE, APROBADO, DENEGADO
+
+    private String motivoRechazo;
+
+    private LocalDateTime fechaRevision;
 
     private LocalDateTime fechaRegistro = LocalDateTime.now();
 
@@ -171,6 +175,34 @@ public class Alojador {
 
     public void setEstadoVerificacion(String estadoVerificacion) {
         this.estadoVerificacion = estadoVerificacion;
+    }
+
+    public String getMotivoRechazo() {
+        return motivoRechazo;
+    }
+
+    public void setMotivoRechazo(String motivoRechazo) {
+        this.motivoRechazo = motivoRechazo;
+    }
+
+    public LocalDateTime getFechaRevision() {
+        return fechaRevision;
+    }
+
+    public void setFechaRevision(LocalDateTime fechaRevision) {
+        this.fechaRevision = fechaRevision;
+    }
+
+    public boolean isAprobado() {
+        return "APROBADO".equalsIgnoreCase(this.estadoVerificacion) || "VERIFICADO".equalsIgnoreCase(this.estadoVerificacion);
+    }
+
+    public boolean isPendiente() {
+        return "PENDIENTE".equalsIgnoreCase(this.estadoVerificacion);
+    }
+
+    public boolean isDenegado() {
+        return "DENEGADO".equalsIgnoreCase(this.estadoVerificacion);
     }
 
     public LocalDateTime getFechaRegistro() {

@@ -14,11 +14,60 @@ public class AlojadorService {
     private AlojadorRepository alojadorRepository;
 
     public Alojador registrar(Alojador alojador) {
-        // En una app real se aplicaría BCrypt, aquí almacenamos para autenticación rápida
-        alojador.setEstadoVerificacion("VERIFICADO");
-        alojador.setAntecedentesVerificados(true);
+        // Al registrarse, la cuenta queda en estado PENDIENTE esperando validación del Administrador
+        alojador.setEstadoVerificacion("PENDIENTE");
+        alojador.setAntecedentesVerificados(false);
         alojador.setAceptaTerminosConvivencia(true);
+        alojador.setFechaRegistro(java.time.LocalDateTime.now());
         return alojadorRepository.save(alojador);
+    }
+
+    public Optional<Alojador> aprobarAlojador(Long id) {
+        return alojadorRepository.findById(id).map(alojador -> {
+            alojador.setEstadoVerificacion("APROBADO");
+            alojador.setAntecedentesVerificados(true);
+            alojador.setFechaRevision(java.time.LocalDateTime.now());
+            alojador.setMotivoRechazo(null);
+            return alojadorRepository.save(alojador);
+        });
+    }
+
+    public Optional<Alojador> denegarAlojador(Long id, String motivo) {
+        return alojadorRepository.findById(id).map(alojador -> {
+            alojador.setEstadoVerificacion("DENEGADO");
+            alojador.setAntecedentesVerificados(false);
+            alojador.setFechaRevision(java.time.LocalDateTime.now());
+            alojador.setMotivoRechazo((motivo != null && !motivo.isBlank()) ? motivo.trim() : "Documentación o antecedentes no verificados satisfactoriamente.");
+            return alojadorRepository.save(alojador);
+        });
+    }
+
+    public java.util.List<Alojador> obtenerPendientes() {
+        return alojadorRepository.findByEstadoVerificacionOrderByFechaRegistroDesc("PENDIENTE");
+    }
+
+    public java.util.List<Alojador> obtenerAprobados() {
+        return alojadorRepository.findByEstadoVerificacionOrderByFechaRegistroDesc("APROBADO");
+    }
+
+    public java.util.List<Alojador> obtenerDenegados() {
+        return alojadorRepository.findByEstadoVerificacionOrderByFechaRegistroDesc("DENEGADO");
+    }
+
+    public java.util.List<Alojador> obtenerTodos() {
+        return alojadorRepository.findAllByOrderByFechaRegistroDesc();
+    }
+
+    public long contarPendientes() {
+        return alojadorRepository.countByEstadoVerificacion("PENDIENTE");
+    }
+
+    public long contarAprobados() {
+        return alojadorRepository.countByEstadoVerificacion("APROBADO");
+    }
+
+    public long contarDenegados() {
+        return alojadorRepository.countByEstadoVerificacion("DENEGADO");
     }
 
     public Optional<Alojador> autenticar(String correo, String password) {

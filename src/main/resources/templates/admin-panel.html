@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | ViveU Cartagena</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding-bottom: 4rem;
+        }
+        .admin-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .admin-stat-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tab-btn.active {
+            color: #7c3aed;
+            border-bottom-color: #7c3aed;
+        }
+        .solicitud-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .solicitud-card:hover {
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.08);
+            border-color: #c4b5fd;
+        }
+        .img-preview-thumb {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .img-preview-thumb:hover {
+            transform: scale(1.04);
+            border-color: #7c3aed;
+        }
+        .btn-aprobar {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+        .btn-aprobar:hover {
+            background: #059669;
+        }
+        .btn-denegar {
+            background: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+        .btn-denegar:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header de Administración -->
+    <header class="admin-header">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <a th:href="@{/}" title="Ir a la web de ViveU">
+                <img th:src="@{/images/logo-viveu.png}" alt="Logo ViveU" style="max-height: 42px; filter: brightness(1.2);">
+            </a>
+            <div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #ffffff;">
+                    Panel de Control y Validación
+                </div>
+                <div style="font-size: 0.76rem; color: #94a3b8;">
+                    Módulo de Verificación Estudiantil • ViveU Cartagena
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span style="font-size: 0.82rem; background: rgba(124, 58, 237, 0.2); color: #c084fc; padding: 0.35rem 0.75rem; border-radius: 9999px; font-weight: 600; border: 1px solid rgba(168, 85, 247, 0.3);">
+                🛡️ Administrador Activo
+            </span>
+            <a th:href="@{/}" target="_blank" style="color: #cbd5e1; font-size: 0.85rem; text-decoration: none; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #334155;">
+                🌐 Ver Sitio Público ↗
+            </a>
+            <a th:href="@{/admin/logout}" style="background: #dc2626; color: #ffffff; font-size: 0.85rem; text-decoration: none; padding: 0.4rem 0.9rem; border-radius: 6px; font-weight: 600;">
+                Cerrar Sesión
+            </a>
+        </div>
+    </header>
+
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem;">
+
+        <!-- Mensajes de éxito -->
+        <div th:if="${aprobadoExito}" style="background: #ecfdf5; border: 1px solid #34d399; color: #065f46; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            ✅ La cuenta del alojador ha sido APROBADA exitosamente. Ya puede iniciar sesión y publicar habitaciones.
+        </div>
+        <div th:if="${denegadoExito}" style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+            ℹ️ La solicitud ha sido rechazada. Se le notificará al postulante si intenta ingresar.
+        </div>
+
+        <!-- Métricas Rápidas -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="admin-stat-card" style="border-left: 4px solid #f59e0b;">
+                <div style="font-size: 2.2rem;">⏳</div>
+                <div>
+                    <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;" th:text="${countPendientes}">0</div>
+                    <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Solicitudes Pendientes</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card" style="border-left: 4px solid #10b981;">
+                <div style="font-size: 2.2rem;">✅</div>
+                <div>
+                    <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;" th:text="${countAprobados}">0</div>
+                    <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Alojadores Aprobados</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card" style="border-left: 4px solid #ef4444;">
+                <div style="font-size: 2.2rem;">❌</div>
+                <div>
+                    <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;" th:text="${countDenegados}">0</div>
+                    <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Solicitudes Denegadas</div>
+                </div>
+            </div>
+
+            <div class="admin-stat-card" style="border-left: 4px solid #7c3aed;">
+                <div style="font-size: 2.2rem;">🏠</div>
+                <div>
+                    <div style="font-size: 1.7rem; font-weight: 800; color: #0f172a;" th:text="${totalAlojamientos}">0</div>
+                    <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">Habitaciones en Catálogo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pestañas de Navegación -->
+        <div style="border-bottom: 2px solid #e2e8f0; margin-bottom: 2rem; display: flex; gap: 0.5rem;">
+            <a th:href="@{/admin/panel(tab='pendientes')}" class="tab-btn" th:classappend="${activeTab == 'pendientes' ? 'active' : ''}">
+                ⏳ Por Validar
+                <span style="background: #fef3c7; color: #92400e; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;" th:text="${countPendientes}">0</span>
+            </a>
+            <a th:href="@{/admin/panel(tab='aprobados')}" class="tab-btn" th:classappend="${activeTab == 'aprobados' ? 'active' : ''}">
+                ✅ Aprobados y Verificados
+                <span style="background: #ecfdf5; color: #065f46; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;" th:text="${countAprobados}">0</span>
+            </a>
+            <a th:href="@{/admin/panel(tab='denegados')}" class="tab-btn" th:classappend="${activeTab == 'denegados' ? 'active' : ''}">
+                ❌ Denegados
+                <span style="background: #fef2f2; color: #991b1b; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;" th:text="${countDenegados}">0</span>
+            </a>
+        </div>
+
+        <!-- SECCIÓN 1: SOLICITUDES PENDIENTES -->
+        <div th:if="${activeTab == 'pendientes'}">
+            <div th:if="${#lists.isEmpty(pendientes)}" style="background: #ffffff; border-radius: 16px; padding: 3rem; text-align: center; border: 1px dashed #cbd5e1;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎉</div>
+                <h3 style="font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;">¡No hay solicitudes pendientes!</h3>
+                <p style="color: #64748b; font-size: 0.9rem;">Todas las postulaciones de alojadores han sido revisadas y dictaminadas.</p>
+            </div>
+
+            <div th:each="alojador : ${pendientes}" class="solicitud-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;" th:text="${alojador.nombreCompleto}">Nombre del Alojador</h2>
+                            <span style="background: #fef3c7; color: #92400e; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                                ⏳ Pendiente de Validación
+                            </span>
+                        </div>
+                        <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.35rem;">
+                            Registrado el: <span th:text="${#temporals.format(alojador.fechaRegistro, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción Inmediata -->
+                    <div style="display: flex; gap: 0.75rem;">
+                        <form th:action="@{/admin/alojador/{id}/aprobar(id=${alojador.id})}" method="post">
+                            <button type="submit" class="btn-aprobar" onclick="return confirm('¿Confirmas que validaste la identidad y deseas APROBAR esta cuenta?')">
+                                ✅ Aprobar Cuenta
+                            </button>
+                        </form>
+
+                        <button type="button" class="btn-denegar" th:onclick="'mostrarRechazo(' + ${alojador.id} + ')'">
+                            ❌ Denegar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenido con Datos y Documentos -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; background: #f8fafc; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0;">
+                    
+                    <!-- Datos Personales -->
+                    <div>
+                        <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #7c3aed; font-weight: 800; margin-bottom: 0.75rem;">
+                            📋 Datos del Postulante
+                        </h4>
+                        <div style="font-size: 0.9rem; line-height: 1.6;">
+                            <div><strong>Tipo de Documento:</strong> <span th:text="${alojador.tipoDocumento}">Cédula</span></div>
+                            <div><strong>Número de Documento:</strong> <code style="background: #ffffff; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; color: #0f172a;" th:text="${alojador.numeroCedula}">45892104</code></div>
+                            <div><strong>Correo:</strong> <span th:text="${alojador.correo}">correo@ejemplo.com</span></div>
+                            <div>
+                                <strong>WhatsApp:</strong> 
+                                <a th:href="'https://wa.me/' + ${alojador.telefonoWhatsapp}" target="_blank" style="color: #059669; font-weight: 600; text-decoration: none;">
+                                    <span th:text="${alojador.telefonoWhatsapp}">+57 300 000 0000</span> 💬
+                                </a>
+                            </div>
+                            <div><strong>Dirección en Cartagena:</strong> <span th:text="${alojador.direccionResidencia}">Barrio Zaragocilla</span></div>
+                        </div>
+
+                        <!-- Filtros de seguridad aceptados -->
+                        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #e2e8f0; font-size: 0.82rem; color: #475569;">
+                            <div>✔️ Certifica no tener antecedentes penales ni policiales.</div>
+                            <div>✔️ Acepta términos de convivencia y tarifas justas.</div>
+                        </div>
+                    </div>
+
+                    <!-- Documentación Visual: Foto Rostro y Cédula -->
+                    <div>
+                        <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #7c3aed; font-weight: 800; margin-bottom: 0.75rem;">
+                            🔍 Documentación Subida (Haz clic para ampliar)
+                        </h4>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div>
+                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">Foto / Selfie Rostro:</div>
+                                <img th:src="${alojador.fotoRostroUrl}" alt="Foto Rostro" class="img-preview-thumb" th:onclick="'abrirModalFoto(\'' + ${alojador.fotoRostroUrl} + '\', \'Foto de Rostro: ' + ${alojador.nombreCompleto} + '\')'">
+                            </div>
+                            <div>
+                                <div style="font-size: 0.78rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">Cédula de Ciudadanía:</div>
+                                <img th:src="${alojador.fotoCedulaUrl}" alt="Foto Cédula" class="img-preview-thumb" th:onclick="'abrirModalFoto(\'' + ${alojador.fotoCedulaUrl} + '\', \'Cédula de: ' + ${alojador.nombreCompleto} + '\')'">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Formulario desplegable para Denegar con motivo -->
+                <div th:id="'form-rechazo-' + ${alojador.id}" style="display: none; margin-top: 1rem; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 1rem;">
+                    <form th:action="@{/admin/alojador/{id}/denegar(id=${alojador.id})}" method="post">
+                        <label style="font-size: 0.85rem; font-weight: 700; color: #9f1239; display: block; margin-bottom: 0.4rem;">
+                            Motivo del rechazo de la cuenta:
+                        </label>
+                        <input type="text" name="motivo" placeholder="Ej: La foto de la cédula es borrosa o no coincide con los datos ingresados." class="form-input" style="margin-bottom: 0.75rem;" required>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button type="submit" class="btn-denegar" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;">
+                                Confirmar Denegación
+                            </button>
+                            <button type="button" class="btn-outline" style="font-size: 0.85rem; padding: 0.4rem 0.85rem;" th:onclick="'ocultarRechazo(' + ${alojador.id} + ')'">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: ALOJADORES APROBADOS -->
+        <div th:if="${activeTab == 'aprobados'}">
+            <div th:if="${#lists.isEmpty(aprobados)}" style="background: #ffffff; border-radius: 16px; padding: 3rem; text-align: center; border: 1px dashed #cbd5e1;">
+                <p style="color: #64748b;">Aún no hay arrendadores aprobados.</p>
+            </div>
+
+            <div th:each="alojador : ${aprobados}" class="solicitud-card" style="border-left: 4px solid #10b981;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <img th:src="${alojador.fotoRostroUrl}" alt="Avatar" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #10b981;">
+                        <div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a;" th:text="${alojador.nombreCompleto}">Nombre</div>
+                            <div style="font-size: 0.82rem; color: #64748b;">
+                                Cédula: <strong th:text="${alojador.numeroCedula}">45892104</strong> • Correo: <span th:text="${alojador.correo}">correo</span> • Tel: <span th:text="${alojador.telefonoWhatsapp}">tel</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.82rem;">
+                            🛡️ Arrendador Verificado y Habilitado
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: SOLICITUDES DENEGADAS -->
+        <div th:if="${activeTab == 'denegados'}">
+            <div th:if="${#lists.isEmpty(denegados)}" style="background: #ffffff; border-radius: 16px; padding: 3rem; text-align: center; border: 1px dashed #cbd5e1;">
+                <p style="color: #64748b;">No hay solicitudes denegadas.</p>
+            </div>
+
+            <div th:each="alojador : ${denegados}" class="solicitud-card" style="border-left: 4px solid #ef4444;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a;" th:text="${alojador.nombreCompleto}">Nombre</div>
+                        <div style="font-size: 0.85rem; color: #991b1b; margin-top: 0.25rem;">
+                            <strong>Motivo de rechazo:</strong> <span th:text="${alojador.motivoRechazo}">Motivo</span>
+                        </div>
+                        <div style="font-size: 0.78rem; color: #64748b; margin-top: 0.2rem;">
+                            Documento: <span th:text="${alojador.numeroCedula}"></span> • Correo: <span th:text="${alojador.correo}"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <form th:action="@{/admin/alojador/{id}/reactivar(id=${alojador.id})}" method="post">
+                            <button type="submit" class="btn-outline" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;" onclick="return confirm('¿Deseas reactivar y aprobar esta cuenta?')">
+                                🔄 Reconsiderar y Aprobar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal para Inspeccionar Fotos en Tamaño Completo -->
+    <div id="modalVisorFoto" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem;">
+        <div style="background: #ffffff; border-radius: 16px; max-width: 700px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <strong id="modalTituloFoto" style="color: #0f172a; font-size: 1rem;">Documento de Verificación</strong>
+                <button onclick="cerrarModalFoto()" style="background: #f1f5f9; border: none; font-size: 1.25rem; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">✕</button>
+            </div>
+            <div style="padding: 1.25rem; text-align: center; background: #09090b;">
+                <img id="modalImgTag" src="" alt="Documento" style="max-height: 70vh; max-width: 100%; object-fit: contain; border-radius: 8px;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarRechazo(id) {
+            document.getElementById('form-rechazo-' + id).style.display = 'block';
+        }
+        function ocultarRechazo(id) {
+            document.getElementById('form-rechazo-' + id).style.display = 'none';
+        }
+        function abrirModalFoto(src, titulo) {
+            document.getElementById('modalImgTag').src = src;
+            document.getElementById('modalTituloFoto').textContent = titulo;
+            const modal = document.getElementById('modalVisorFoto');
+            modal.style.display = 'flex';
+        }
+        function cerrarModalFoto() {
+            document.getElementById('modalVisorFoto').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

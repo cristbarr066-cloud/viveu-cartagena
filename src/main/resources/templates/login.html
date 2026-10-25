@@ -39,12 +39,22 @@
                 </p>
             </div>
 
+            <!-- Alerta de éxito (registro enviado) -->
+            <div th:if="${successMsg}" style="background: rgba(16, 185, 129, 0.08); border: 1px solid #34d399; color: #065f46; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.45;">
+                ✅ <strong th:text="${successMsg}"></strong>
+            </div>
+
+            <!-- Alerta de advertencia (cuenta pendiente) -->
+            <div th:if="${warningMsg}" style="background: rgba(245, 158, 11, 0.08); border: 1px solid #fbbf24; color: #92400e; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.45;">
+                ⏳ <strong th:text="${warningMsg}"></strong>
+            </div>
+
             <!-- Alerta informativa si fue redirigido al intentar publicar -->
             <div th:if="${infoMsg}" style="background: rgba(124, 58, 237, 0.08); border: 1px solid #c084fc; color: #581c87; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.45;">
                 🛡️ <strong th:text="${infoMsg}"></strong>
             </div>
 
-            <!-- Alerta de credenciales incorrectas -->
+            <!-- Alerta de credenciales incorrectas o denegada -->
             <div th:if="${errorMsg}" style="background: #fef2f2; border: 1px solid #f87171; color: #b91c1c; padding: 0.9rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; font-weight: 600;">
                 ⚠️ <span th:text="${errorMsg}"></span>
             </div>
@@ -88,5 +98,6 @@
         <p>ViveU Cartagena • Universidad de Cartagena 2026</p>
     </footer>
 
+    <script th:src="@{/js/secret-admin.js}"></script>
 </body>
 </html>
