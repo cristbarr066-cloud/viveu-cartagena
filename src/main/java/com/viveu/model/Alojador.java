@@ -113,6 +113,15 @@ public class Alojador {
         this.telefonoWhatsapp = telefonoWhatsapp;
     }
 
+    public String getTelefonoWhatsappSanitizado() {
+        if (telefonoWhatsapp == null) return "573000000000";
+        String digits = telefonoWhatsapp.replaceAll("[^0-9]", "");
+        if (digits.length() == 10 && digits.startsWith("3")) {
+            return "57" + digits;
+        }
+        return digits.isEmpty() ? "573000000000" : digits;
+    }
+
     public String getTipoDocumento() {
         return tipoDocumento;
     }

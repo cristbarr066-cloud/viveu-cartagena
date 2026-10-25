@@ -299,7 +299,7 @@
                             ❌ Denegar
                         </button>
 
-                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='pendientes')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Deseas ELIMINAR definitivamente esta solicitud de ' + ${alojador.nombreCompleto} + '?\')'">
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='pendientes')}" method="post" style="display: inline;" onsubmit="return confirm('¿Deseas ELIMINAR definitivamente esta solicitud del sistema?')">
                             <button type="submit" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 0.65rem 0.85rem; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer;" title="Eliminar registro">
                                 🗑️
                             </button>
@@ -322,7 +322,7 @@
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
                                 <strong>WhatsApp:</strong> 
                                 <span th:text="${alojador.telefonoWhatsapp}">+57 300 000 0000</span>
-                                <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20desde%20la%20administración%20de%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Abrir chat">
+                                <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsappSanitizado} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20desde%20la%20administración%20de%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Abrir chat">
                                     💬 Chatear
                                 </a>
                             </div>
@@ -388,15 +388,15 @@
                         <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-size: 0.82rem;">
                             🛡️ Arrendador Verificado y Habilitado
                         </span>
-                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20saludamos%20del%20equipo%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Escribir por WhatsApp">
+                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsappSanitizado} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20saludamos%20del%20equipo%20ViveU%20Cartagena.'" target="_blank" class="btn-whatsapp-direct" title="Escribir por WhatsApp">
                             💬 Contactar
                         </a>
-                        <form th:action="@{/admin/alojador/{id}/revocar(id=${alojador.id})}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Confirmas que deseas REVOCAR el acceso a ' + ${alojador.nombreCompleto} + '? Su cuenta quedará bloqueada para publicar y se le notificará por WhatsApp.\')'">
+                        <form th:action="@{/admin/alojador/{id}/revocar(id=${alojador.id})}" method="post" style="display: inline;" onsubmit="return confirm('¿Confirmas que deseas REVOCAR el acceso a este arrendador? Su cuenta quedará bloqueada para publicar.')">
                             <button type="submit" style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
                                 ⛔ Revocar Acceso
                             </button>
                         </form>
-                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='aprobados')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'⚠️ ¿Estás seguro de que deseas ELIMINAR definitivamente la cuenta de ' + ${alojador.nombreCompleto} + '? Se borrará su acceso y todas sus habitaciones publicadas.\')'">
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='aprobados')}" method="post" style="display: inline;" onsubmit="return confirm('⚠️ ¿Estás seguro de que deseas ELIMINAR definitivamente esta cuenta? Se borrará su acceso y todas sus habitaciones publicadas.')">
                             <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
                                 🗑️ Eliminar
                             </button>
@@ -424,7 +424,7 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsapp.replaceAll('[^0-9]', '')} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20de%20ViveU%20respecto%20a%20tu%20solicitud%20de%20arrendador.'" target="_blank" class="btn-whatsapp-direct">
+                        <a th:href="'https://api.whatsapp.com/send?phone=' + ${alojador.telefonoWhatsappSanitizado} + '&text=Hola%20' + ${alojador.nombreCompleto} + ',%20te%20escribimos%20de%20ViveU%20respecto%20a%20tu%20solicitud%20de%20arrendador.'" target="_blank" class="btn-whatsapp-direct">
                             💬 WhatsApp
                         </a>
                         <form th:action="@{/admin/alojador/{id}/reactivar(id=${alojador.id})}" method="post">
@@ -432,7 +432,7 @@
                                 🔄 Reconsiderar y Aprobar
                             </button>
                         </form>
-                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='denegados')}" method="post" style="display: inline;" th:onsubmit="'return confirm(\'¿Deseas ELIMINAR definitivamente el registro de ' + ${alojador.nombreCompleto} + ' del sistema?\')'">
+                        <form th:action="@{/admin/alojador/{id}/eliminar(id=${alojador.id}, tab='denegados')}" method="post" style="display: inline;" onsubmit="return confirm('¿Deseas ELIMINAR definitivamente el registro del sistema?')">
                             <button type="submit" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer;">
                                 🗑️ Eliminar
                             </button>
