@@ -43,10 +43,11 @@ public class AlojamientoService {
         return alojamientoRepository.save(alojamiento);
     }
 
-    public List<Alojamiento> filtrar(String sede, Double precioMax, Boolean soloVerificados, 
+    public List<Alojamiento> filtrar(String sede, String tipo, Double precioMax, Boolean soloVerificados, 
                                      Boolean aireAcondicionado, Boolean incluyeServicios) {
         return alojamientoRepository.filtrarAlojamientos(
                 (sede != null && !sede.isBlank()) ? sede : null,
+                (tipo != null && !tipo.isBlank()) ? tipo : null,
                 precioMax,
                 soloVerificados,
                 aireAcondicionado,

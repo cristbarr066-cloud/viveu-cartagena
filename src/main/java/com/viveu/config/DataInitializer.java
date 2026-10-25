@@ -69,11 +69,11 @@ public class DataInitializer {
             Alojamiento a1 = new Alojamiento(
                 "Habitación Estudiantil a 4 min de Medicina Zaragocilla",
                 "Habitación independiente y fresca en casa familiar tranquila. Ambiente exclusivo para estudiantes de ciencias de la salud. Incluye escritorio de estudio, armario empotrado y acceso a cocina integral compartida.",
-                390000.0,
+                550000.0,
                 "Zaragocilla",
                 "Sede Zaragocilla (Salud)",
                 4,
-                "Individual con baño privado",
+                "Apartaestudio",
                 true,
                 true,
                 false,
@@ -97,11 +97,11 @@ public class DataInitializer {
             Alojamiento a2 = new Alojamiento(
                 "Cuarto Universitario Económico cerca a Piedra de Bolívar",
                 "Habitación acogedora a pasos de la sede de Ingenierías. Excelente ventilación natural, cama individual, closet y mesa de trabajo. Zona residencial segura con fácil acceso a la Avenida Pedro de Heredia y estación de Transcaribe.",
-                340000.0,
+                520000.0,
                 "Los Cerros",
                 "Sede Piedra de Bolívar (Ingeniería)",
                 6,
-                "Individual con baño compartido",
+                "Habitaciones compartidas",
                 true,
                 true,
                 false,
@@ -124,11 +124,11 @@ public class DataInitializer {
             Alojamiento a3 = new Alojamiento(
                 "Suite Estudiantil con Aire Acondicionado en Amberes",
                 "Espacio moderno y climatizado para sobrellevar las tardes cálidas de Cartagena. Baño privado recién remodelado, mini refrigerador y cama semi-doble. Ideal para estudiantes de San Pablo o Piedra de Bolívar.",
-                480000.0,
+                780000.0,
                 "Amberes",
                 "Sede Piedra de Bolívar (Ingeniería)",
                 10,
-                "Individual con baño privado",
+                "Habitaciones premium",
                 true,
                 true,
                 true,
@@ -151,11 +151,11 @@ public class DataInitializer {
             Alojamiento a4 = new Alojamiento(
                 "Habitación en Casa Colonial cerca a Claustro San Agustín",
                 "Ubicación inmejorable en el Centro Histórico a 3 calles de la Facultad de Derecho y Ciencias Sociales. Habitación amplia con techos altos, piso republicano y ambiente propicio para lectura e investigación.",
-                460000.0,
+                720000.0,
                 "Centro Histórico",
                 "Sede Claustro San Agustín (Centro)",
                 5,
-                "Individual con baño compartido",
+                "Apartaestudio",
                 true,
                 true,
                 false,
@@ -178,11 +178,11 @@ public class DataInitializer {
             Alojamiento a5 = new Alojamiento(
                 "Cuarto Compartido Doble Ultra-Económico en Pie de la Popa",
                 "Solución pensada para estudiantes con presupuesto ajustado que deseen compartir gastos. Incluye dos camas individuales, dos escritorios, ventilador de techo y servicios públicos incluidos. A 1 ruta de Transcaribe a Zaragocilla y Piedra de Bolívar.",
-                300000.0,
+                500000.0,
                 "Pie de la Popa",
                 "Sede Zaragocilla (Salud)",
                 12,
-                "Compartida doble",
+                "Habitaciones compartidas",
                 true,
                 true,
                 false,
@@ -195,7 +195,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80",
                 "Marta Lucía De Ávila",
                 "+57 300 912 3345",
-                "Precio por persona ($300.000 COP c/u). Ideal para compañeros que vengan del mismo municipio.",
+                "Precio por persona ($500.000 COP c/u). Ideal para compañeros que vengan del mismo municipio.",
                 4.6
             );
             a5.setDireccion("Calle 30 # 21-35, Pie de la Popa");
@@ -205,11 +205,11 @@ public class DataInitializer {
             Alojamiento a6 = new Alojamiento(
                 "Estudio Cómodo cerca a la Sede San Pablo en San Diego",
                 "Alojamiento privado a 7 minutos a pie de la Sede San Pablo. Ventilación cruzada, vista a la calle y cerca a supermercados y librerías universitarias.",
-                420000.0,
+                650000.0,
                 "Torices",
                 "Sede San Pablo",
                 7,
-                "Individual con baño privado",
+                "Apartaestudio",
                 true,
                 true,
                 false,
@@ -222,7 +222,7 @@ public class DataInitializer {
                 "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
                 "Javier Morales",
                 "+57 318 667 9043",
-                "Incluye internet de 300 megas simétrico para clases virtuales y trabajos.",
+                "Incluye internet de alta velocidad simétrico para clases virtuales y trabajos.",
                 4.8
             );
             a6.setDireccion("Paseo Bolívar # 41-10, Torices");
@@ -230,13 +230,13 @@ public class DataInitializer {
             a6.setLongitud(-75.5380);
 
             Alojamiento a7 = new Alojamiento(
-                "Habitación en Casa Estudiantil Familiar en Blas de Lezo",
-                "Excelente opción en el sur de Cartagena con acceso directo a rutas alimentadoras de Transcaribe. Muy segura, ambiente acogedor con derecho a cocinar y lavar.",
-                320000.0,
+                "Apartamento Completo Estudiantil en Blas de Lezo",
+                "Apartamento completo independiente en el sur de Cartagena con acceso directo a rutas alimentadoras de Transcaribe. Muy seguro, cuenta con sala, cocina equipada y área de lavado.",
+                850000.0,
                 "Blas de Lezo",
                 "Sede Piedra de Bolívar (Ingeniería)",
                 15,
-                "Individual con baño compartido",
+                "Apartamento completo",
                 true,
                 true,
                 false,
@@ -259,11 +259,11 @@ public class DataInitializer {
             Alojamiento a8 = new Alojamiento(
                 "Habitación Premium con A/A y Balcón en Manga",
                 "Habitación para estudiante con altos estándares. Aire acondicionado inverter silencioso, balcón con brisa de la bahía, internet de alta velocidad y baño privado.",
-                520000.0,
+                950000.0,
                 "Manga",
                 "Sede Claustro San Agustín (Centro)",
                 10,
-                "Individual con baño privado",
+                "Habitaciones premium",
                 true,
                 true,
                 true,

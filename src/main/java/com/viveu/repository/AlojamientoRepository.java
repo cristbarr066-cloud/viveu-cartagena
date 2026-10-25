@@ -23,11 +23,13 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long> 
 
     @Query("SELECT a FROM Alojamiento a WHERE " +
            "(:sede IS NULL OR :sede = '' OR LOWER(a.sedeCercana) LIKE LOWER(CONCAT('%', :sede, '%'))) AND " +
+           "(:tipo IS NULL OR :tipo = '' OR LOWER(a.tipoHabitacion) LIKE LOWER(CONCAT('%', :tipo, '%'))) AND " +
            "(:precioMax IS NULL OR a.precioMensual <= :precioMax) AND " +
            "(:soloVerificados IS NULL OR :soloVerificados = false OR a.verificadoViveU = true) AND " +
            "(:aireAcondicionado IS NULL OR :aireAcondicionado = false OR a.aireAcondicionado = true) AND " +
            "(:incluyeServicios IS NULL OR :incluyeServicios = false OR a.incluyeServicios = true)")
     List<Alojamiento> filtrarAlojamientos(@Param("sede") String sede,
+                                         @Param("tipo") String tipo,
                                          @Param("precioMax") Double precioMax,
                                          @Param("soloVerificados") Boolean soloVerificados,
                                          @Param("aireAcondicionado") Boolean aireAcondicionado,

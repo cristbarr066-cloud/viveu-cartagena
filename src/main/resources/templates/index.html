@@ -88,8 +88,8 @@
                 <div class="metric-label">Encuentra y compara habitaciones en minutos en lugar de semanas</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">$300k - $500k</div>
-                <div class="metric-label">Precios promedio accesibles pensados para estudiantes</div>
+                <div class="metric-number">$500k - $1M</div>
+                <div class="metric-label">Precios promedio accesibles pensados para estudiantes ($500.000 a $1.000.000 COP)</div>
             </div>
             <div class="metric-card">
                 <div class="metric-number">4 Sedes</div>
@@ -103,7 +103,7 @@
 
         <!-- Filtros Inteligentes -->
         <div class="filter-container">
-            <div class="filter-grid">
+            <div class="filter-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                 <!-- Filtro por Sede Universitaria -->
                 <div class="filter-group">
                     <label for="filtroSede" class="filter-label">
@@ -118,12 +118,26 @@
                     </select>
                 </div>
 
+                <!-- Filtro por Tipo de Alojamiento -->
+                <div class="filter-group">
+                    <label for="filtroTipo" class="filter-label">
+                        <span>🏠</span> Tipo de Alojamiento
+                    </label>
+                    <select id="filtroTipo" class="form-select">
+                        <option value="">Todos los Tipos</option>
+                        <option value="Apartaestudio">Aparta estudio</option>
+                        <option value="Habitaciones compartidas">Habitaciones compartidas</option>
+                        <option value="Apartamento completo">Apartamento completo</option>
+                        <option value="Habitaciones premium">Habitaciones premium</option>
+                    </select>
+                </div>
+
                 <!-- Filtro de Presupuesto con Slider -->
                 <div class="filter-group">
                     <label for="filtroPrecio" class="filter-label">
-                        <span>💰</span> Presupuesto Máximo: <strong id="valorPrecioMax" style="color: var(--primary); margin-left: auto;">$500.000 COP</strong>
+                        <span>💰</span> Presupuesto Máximo: <strong id="valorPrecioMax" style="color: var(--primary); margin-left: auto;">$1.000.000 COP</strong>
                     </label>
-                    <input type="range" id="filtroPrecio" min="300000" max="500000" step="10000" value="500000" class="form-input" style="padding: 0.2rem 0; cursor: pointer; accent-color: var(--primary);">
+                    <input type="range" id="filtroPrecio" min="300000" max="1000000" step="20000" value="1000000" class="form-input" style="padding: 0.2rem 0; cursor: pointer; accent-color: var(--primary);">
                 </div>
 
                 <!-- Botón de Asistente Rápido -->

@@ -23,6 +23,7 @@ async function cargarDatosIniciales() {
 function inicializarEventos() {
     // Filtros
     const selectSede = document.getElementById('filtroSede');
+    const selectTipo = document.getElementById('filtroTipo');
     const inputPrecio = document.getElementById('filtroPrecio');
     const labelPrecio = document.getElementById('valorPrecioMax');
     const checkVerificados = document.getElementById('filtroVerificados');
@@ -37,7 +38,7 @@ function inicializarEventos() {
         });
     }
 
-    [selectSede, checkVerificados, checkAire, checkServicios].forEach(el => {
+    [selectSede, selectTipo, checkVerificados, checkAire, checkServicios].forEach(el => {
         if (el) el.addEventListener('change', ejecutarFiltro);
     });
 
@@ -87,13 +88,15 @@ function inicializarEventos() {
 // Filtro Dinámico
 async function ejecutarFiltro() {
     const sede = document.getElementById('filtroSede')?.value || '';
-    const precioMax = document.getElementById('filtroPrecio')?.value || 500000;
+    const tipo = document.getElementById('filtroTipo')?.value || '';
+    const precioMax = document.getElementById('filtroPrecio')?.value || 1000000;
     const soloVerificados = document.getElementById('filtroVerificados')?.checked || false;
     const aireAcondicionado = document.getElementById('filtroAire')?.checked || false;
     const incluyeServicios = document.getElementById('filtroServicios')?.checked || false;
 
     const params = new URLSearchParams();
     if (sede) params.append('sede', sede);
+    if (tipo) params.append('tipo', tipo);
     if (precioMax) params.append('precioMax', precioMax);
     if (soloVerificados) params.append('soloVerificados', 'true');
     if (aireAcondicionado) params.append('aireAcondicionado', 'true');
@@ -122,8 +125,8 @@ function renderizarTarjetas(lista) {
         contenedor.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle); box-shadow: var(--shadow-sm);">
                 <span style="font-size: 2.5rem;">🔍</span>
-                <h3 style="margin-top: 1rem; color: #0f172a;">No encontramos habitaciones con esos filtros exactos</h3>
-                <p style="color: var(--text-muted); margin-top: 0.5rem;">Intenta aumentar el presupuesto o desactivar filtros de servicios.</p>
+                <h3 style="margin-top: 1rem; color: #0f172a;">No encontramos opciones con esos filtros exactos</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Intenta aumentar el presupuesto o elegir otro tipo de alojamiento.</p>
                 <button onclick="resetearFiltros()" class="btn-outline" style="margin-top: 1.5rem;">Restablecer filtros</button>
             </div>
         `;
@@ -151,7 +154,7 @@ function renderizarTarjetas(lista) {
                 <p class="card-desc">${a.descripcion}</p>
                 
                 <div class="card-amenities">
-                    <span class="amenity-pill">${a.tipoHabitacion}</span>
+                    <span class="amenity-pill" style="background: rgba(124, 58, 237, 0.1); color: var(--primary); font-weight: 700;">🏠 ${a.tipoHabitacion}</span>
                     ${a.incluyeServicios ? '<span class="amenity-pill">💡 Servicios incl.</span>' : ''}
                     ${a.wifiFibraOptica ? '<span class="amenity-pill">📶 Wi-Fi Alta Vel.</span>' : ''}
                     ${a.aireAcondicionado ? '<span class="amenity-pill">❄️ Con Aire A/A</span>' : ''}
@@ -179,8 +182,9 @@ function renderizarTarjetas(lista) {
 
 function resetearFiltros() {
     document.getElementById('filtroSede').value = '';
-    document.getElementById('filtroPrecio').value = 500000;
-    document.getElementById('valorPrecioMax').textContent = '$500.000 COP';
+    if (document.getElementById('filtroTipo')) document.getElementById('filtroTipo').value = '';
+    document.getElementById('filtroPrecio').value = 1000000;
+    document.getElementById('valorPrecioMax').textContent = '$1.000.000 COP';
     document.getElementById('filtroVerificados').checked = false;
     document.getElementById('filtroAire').checked = false;
     document.getElementById('filtroServicios').checked = false;

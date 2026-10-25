@@ -19,12 +19,13 @@ public class AlojamientoRestController {
     @GetMapping("/alojamientos")
     public List<Alojamiento> listarAlojamientos(
             @RequestParam(required = false) String sede,
+            @RequestParam(required = false) String tipo,
             @RequestParam(required = false) Double precioMax,
             @RequestParam(required = false) Boolean soloVerificados,
             @RequestParam(required = false) Boolean aireAcondicionado,
             @RequestParam(required = false) Boolean incluyeServicios) {
         
-        return alojamientoService.filtrar(sede, precioMax, soloVerificados, aireAcondicionado, incluyeServicios);
+        return alojamientoService.filtrar(sede, tipo, precioMax, soloVerificados, aireAcondicionado, incluyeServicios);
     }
 
     @GetMapping("/alojamientos/destacados")
