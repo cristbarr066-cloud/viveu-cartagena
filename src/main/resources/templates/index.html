@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViveU | Alojamientos para Estudiantes Universitarios en Cartagena</title>
+    <meta name="description" content="Plataforma de catálogo inteligente y comparación de habitaciones para estudiantes en Cartagena. Encuentra opciones seguras y económicas cerca a tu universidad.">
+    
+    <!-- Leaflet Maps CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Barra de Navegación -->
+    <!-- Barra de Navegación con Logo Centrado y Protagonista -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link active">Explorar Catálogo</a>
+            <a href="#calculadora" class="nav-link">Simulador Transcaribe</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU - Encuentra tu espacio, empieza tu proceso" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <!-- Si está logueado como Alojador Verificado -->
+            <div th:if="${alojadorLogueado != null}" style="display: flex; align-items: center; gap: 0.6rem;">
+                <a th:href="@{/mis-alojamientos}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <img th:src="${alojadorLogueado.fotoRostroUrl}" alt="Foto" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+                    <div style="text-align: left; line-height: 1.2;">
+                        <strong style="font-size: 0.85rem; color: #0f172a;" th:text="${alojadorLogueado.nombreCompleto}"></strong>
+                        <div style="font-size: 0.72rem; color: #7c3aed; font-weight: 700;">Mi Panel ✓</div>
+                    </div>
+                </a>
+                <a th:href="@{/publicar}" class="btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+                    ➕ Publicar
+                </a>
+                <a th:href="@{/logout}" class="btn-outline" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+                    Salir
+                </a>
+            </div>
+
+            <!-- Si es visitante o no ha iniciado sesión -->
+            <div th:if="${alojadorLogueado == null}" style="display: flex; align-items: center; gap: 0.75rem;">
+                <a th:href="@{/publicar}" class="btn-outline">
+                    <span>➕</span> Publicar Habitación
+                </a>
+                <a th:href="@{/login}" class="btn-primary">
+                    <span>🔑</span> Soy Alojador
+                </a>
+                <a th:href="@{/modelo-negocio}" class="nav-link" style="font-size: 0.85rem; color: var(--text-muted);">
+                    Modelo de Negocio
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notificación si acaba de cerrar sesión -->
+    <div th:if="${param.sesionCerrada}" style="background: rgba(124, 58, 237, 0.08); border-bottom: 1px solid #c084fc; color: #581c87; text-align: center; padding: 0.75rem; font-size: 0.9rem; font-weight: 600;">
+        🔒 Has cerrado sesión de tu cuenta de alojador correctamente.
+    </div>
+
+    <!-- Notificación si se acaba de publicar -->
+    <div th:if="${param.publicado}" style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); color: #065f46; text-align: center; padding: 0.75rem; font-size: 0.9rem; font-weight: 600;">
+        🎉 ¡Habitación publicada con éxito! Ya está disponible en el catálogo estudiantil con el sello <strong>✓ Verificado ViveU</strong>.
+    </div>
+
+    <!-- Sección Hero -->
+    <section class="hero-section">
+        <div class="hero-pill">
+            <span>🛡️</span> Alojamientos 100% verificados contra anuncios falsos
+        </div>
+        <h1 class="hero-title">
+            Tu habitación universitaria en Cartagena, <br>
+            <span class="gradient-text">segura, cerca y a tu presupuesto.</span>
+        </h1>
+        <p class="hero-subtitle">
+            Reunimos en un solo catálogo las mejores opciones de habitaciones y residencias compartidas cerca a las sedes de la Universidad de Cartagena. Compara precios, servicios y tiempos de traslado en segundos.
+        </p>
+
+        <!-- Métricas Principales -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-number">5 Minutos</div>
+                <div class="metric-label">Encuentra y compara habitaciones en minutos en lugar de semanas</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">$300k - $500k</div>
+                <div class="metric-label">Precios promedio accesibles pensados para estudiantes</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">4 Sedes</div>
+                <div class="metric-label">Zaragocilla, Piedra de Bolívar, San Agustín y San Pablo</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">100% Verificados</div>
+                <div class="metric-label">Publicaciones revisadas con fotos reales y datos transparentes</div>
+            </div>
+        </div>
+
+        <!-- Filtros Inteligentes -->
+        <div class="filter-container">
+            <div class="filter-grid">
+                <!-- Filtro por Sede Universitaria -->
+                <div class="filter-group">
+                    <label for="filtroSede" class="filter-label">
+                        <span>🏫</span> Sede Universitaria
+                    </label>
+                    <select id="filtroSede" class="form-select">
+                        <option value="">Todas las Sedes de Cartagena</option>
+                        <option value="Zaragocilla">Sede Zaragocilla (Salud / Medicina)</option>
+                        <option value="Piedra de Bolívar">Sede Piedra de Bolívar (Ingeniería)</option>
+                        <option value="San Agustín">Sede Claustro San Agustín (Centro)</option>
+                        <option value="San Pablo">Sede San Pablo</option>
+                    </select>
+                </div>
+
+                <!-- Filtro de Presupuesto con Slider -->
+                <div class="filter-group">
+                    <label for="filtroPrecio" class="filter-label">
+                        <span>💰</span> Presupuesto Máximo: <strong id="valorPrecioMax" style="color: var(--primary); margin-left: auto;">$500.000 COP</strong>
+                    </label>
+                    <input type="range" id="filtroPrecio" min="300000" max="500000" step="10000" value="500000" class="form-input" style="padding: 0.2rem 0; cursor: pointer; accent-color: var(--primary);">
+                </div>
+
+                <!-- Botón de Asistente Rápido -->
+                <div class="filter-group" style="justify-content: flex-end;">
+                    <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="document.getElementById('aiChatWindow').classList.add('open')">
+                        <span>💡</span> Asesor de Alojamiento
+                    </button>
+                </div>
+            </div>
+
+            <!-- Checkboxes de Amenidades y Verificación -->
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="filtroVerificados" checked>
+                    <span>🛡️ Solo verificados ViveU</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="filtroAire">
+                    <span>❄️ Aire Acondicionado</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="filtroServicios">
+                    <span>💡 Servicios públicos incluidos (Luz/Agua/Gas)</span>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo de Alojamientos -->
+    <section class="catalog-section" id="catalogo">
+        <div class="catalog-header">
+            <div>
+                <h2 class="catalog-title">
+                    <span>📍</span> Opciones Disponibles en Cartagena
+                </h2>
+                <div class="catalog-count" id="contadorAlojamientos" th:text="${totalAlojamientos + ' alojamientos disponibles'}">
+                    Cargando opciones...
+                </div>
+            </div>
+            <div>
+                <button class="btn-outline" style="font-size: 0.8rem;" onclick="resetearFiltros()">Limpiar Filtros</button>
+            </div>
+        </div>
+
+        <div class="cards-grid" id="gridAlojamientos">
+            <!-- Renderizado Inicial Thymeleaf con fallback a JavaScript -->
+            <div th:each="a : ${alojamientos}" class="alojamiento-card" th:id="'card-' + ${a.id}">
+                <div class="card-image-wrap">
+                    <img th:src="${a.imagenUrl}" th:alt="${a.titulo}" class="card-image" loading="lazy">
+                    <div class="card-badges">
+                        <span th:if="${a.destacado}" class="badge-featured">⭐ Destacado VIP</span>
+                        <span th:if="${a.verificadoViveU}" class="badge-verified">✓ Verificado ViveU</span>
+                    </div>
+                    <div class="card-price-tag">
+                        <span th:text="'$' + ${#numbers.formatDecimal(a.precioMensual, 0, 'POINT', 0, 'COMMA')}"></span>
+                        <span>/mes</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-location">
+                        <span>📍</span> <span th:text="${a.sector} + ' • ' + ${a.distanciaMinutos} + ' min a sede'"></span>
+                    </div>
+                    <h3 class="card-title" th:text="${a.titulo}"></h3>
+                    <p class="card-desc" th:text="${a.descripcion}"></p>
+                    
+                    <div class="card-amenities">
+                        <span class="amenity-pill" th:text="${a.tipoHabitacion}"></span>
+                        <span th:if="${a.incluyeServicios}" class="amenity-pill">💡 Servicios incl.</span>
+                        <span th:if="${a.wifiFibraOptica}" class="amenity-pill">📶 Wi-Fi Alta Vel.</span>
+                        <span th:if="${a.aireAcondicionado}" class="amenity-pill">❄️ Con Aire A/A</span>
+                        <span th:if="${a.abanico}" class="amenity-pill">🌀 Abanico</span>
+                        <span th:if="${a.cocinaDisponible}" class="amenity-pill">🍳 Cocina</span>
+                    </div>
+
+                    <div class="card-footer">
+                        <label class="compare-btn-checkbox">
+                            <input type="checkbox" class="compare-checkbox" th:value="${a.id}" 
+                                   th:data-img="${a.imagenUrl}">
+                            Comparar
+                        </label>
+                        <button class="btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;" 
+                                th:onclick="'verDetalleAlojamiento(' + ${a.id} + ')'">
+                            Ver Detalles
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulador de Presupuesto Transcaribe -->
+    <section class="catalog-section" id="calculadora">
+        <div class="calculator-card">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 2rem;">🧮</span>
+                <h3 style="font-size: 1.6rem; color: #0f172a;">Simulador de Gasto Total (Arriendo + Transcaribe)</h3>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                En Cartagena, el costo del transporte diario define si un alojamiento es realmente económico. Calcula el gasto mensual real estimado para tus estudios.
+            </p>
+
+            <div class="calc-grid">
+                <div>
+                    <div class="filter-group" style="margin-bottom: 1rem;">
+                        <label class="filter-label">Valor del Arriendo Mensual (COP)</label>
+                        <input type="number" id="calcArriendo" value="380000" step="10000" class="form-input" placeholder="Ej: 380000">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                        <div class="filter-group">
+                            <label class="filter-label">Viajes por Día</label>
+                            <input type="number" id="calcViajes" value="2" min="0" max="20" class="form-input" placeholder="Ej: 2">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Días al Mes</label>
+                            <input type="number" id="calcDias" value="22" min="1" max="31" class="form-input" placeholder="Ej: 22">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Tarifa Oficial Transcaribe</label>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="number" id="calcTarifa" value="3900" class="form-input" style="max-width: 160px;" readonly>
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">COP por pasaje</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calc-result-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Gasto Estimado de Transporte:</span>
+                        <span id="calcTotalViajesMes" style="font-size: 0.8rem; font-weight: 700; color: var(--primary); background: rgba(2, 132, 199, 0.08); padding: 0.15rem 0.5rem; border-radius: var(--radius-full);">44 viajes al mes</span>
+                    </div>
+                    <div style="font-size: 1.3rem; font-weight: 800; color: #0284c7; margin-bottom: 1.25rem;" id="calcResTransporte">$171.600 COP / mes</div>
+
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">Presupuesto Total Mensual Estimado:</div>
+                    <div class="calc-price-big" id="calcResTotal">$551.600 COP</div>
+                    <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 0.75rem; font-weight: 500; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                        💡 <em>Tip:</em> Si vives cerca y vas caminando, ahorras <strong id="calcAhorroTexto">$171.600 COP</strong> mensuales en pasajes.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Barra Flotante de Comparación de Alojamientos -->
+    <div class="floating-compare-bar" id="floatingCompareBar">
+        <div class="compare-info">
+            <span style="font-size: 1.2rem;">⚖️</span>
+            <span id="compareCount">1 seleccionado</span>
+            <div class="compare-chips" id="compareChips"></div>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="limpiarComparador()">Limpiar</button>
+            <button class="btn-primary" id="btnAbrirComparador">Comparar en Paralelo</button>
+        </div>
+    </div>
+
+    <!-- Modal Comparador y Detalle -->
+    <div class="modal-overlay" id="modalComparador">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚖️</span> Comparación Inteligente ViveU
+                </div>
+                <button class="modal-close-btn" id="btnCerrarModal">✕</button>
+            </div>
+            <div id="tablaComparativaContainer">
+                <!-- Se llena con JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Asistente Flotante ViveU -->
+    <div class="ai-widget-button" id="btnToggleIA" title="Abrir Asesor ViveU">
+        💬
+    </div>
+
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">🏠</span>
+                <div>
+                    <div style="font-weight: 700; font-size: 0.95rem; color: #0f172a;">Asesor ViveU</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">Búsqueda personalizada de cuartos</div>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="ai-badge" style="background: rgba(16, 185, 129, 0.12); color: #059669;">● En línea</span>
+                <button class="modal-close-btn" id="btnCerrarIA" style="width: 28px; height: 28px; font-size: 1rem;">✕</button>
+            </div>
+        </div>
+
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-msg bot">
+                ¡Hola! 👋 Te ayudo a encontrar la habitación ideal en Cartagena. Cuéntame en qué sede estudias o cuál es tu presupuesto aproximado.
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.35rem; margin: 0.5rem 0;">
+                <button class="btn-outline" style="font-size: 0.75rem; text-align: left; padding: 0.35rem 0.65rem;" 
+                        onclick="usarPromptIA('Estudio Medicina en Zaragocilla y tengo 400 mil de presupuesto')">
+                    💡 "Estudio Medicina en Zaragocilla y tengo 400 mil"
+                </button>
+                <button class="btn-outline" style="font-size: 0.75rem; text-align: left; padding: 0.35rem 0.65rem;" 
+                        onclick="usarPromptIA('Busco cuarto económico cerca a Piedra de Bolívar con wifi')">
+                    💡 "Busco en Piedra de Bolívar económico con wifi"
+                </button>
+                <button class="btn-outline" style="font-size: 0.75rem; text-align: left; padding: 0.35rem 0.65rem;" 
+                        onclick="usarPromptIA('Quiero habitación con aire acondicionado cerca al Centro Claustro San Agustín')">
+                    💡 "Habitación con aire cerca a San Agustín"
+                </button>
+            </div>
+        </div>
+
+        <form class="ai-chat-input-area" id="formChatIA">
+            <input type="text" id="inputChatIA" placeholder="Ej: Busco cuarto de 350 mil en Los Cerros..." autocomplete="off">
+            <button type="submit" class="ai-send-btn">➤</button>
+        </form>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer class="footer">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                ViveU Cartagena
+            </div>
+            <p>Proyecto de Emprendimiento y Solución PropTech para la Comunidad Universitaria de Cartagena.</p>
+            <div class="footer-team">
+                <strong>Equipo Creador:</strong> Verónica Arrieta • Maydee Hernández • Luisa Cervantes<br>
+                <em>Asignatura: Desarrollo del Espíritu Emprendedor | Programa de Administración Industrial | Universidad de Cartagena 2026</em>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet Maps JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Scripts -->
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

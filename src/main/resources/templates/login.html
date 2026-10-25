@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión Alojador | ViveU Cartagena</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header con Logo Centrado -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link">← Catálogo Estudiantil</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <a th:href="@{/registro-alojador}" class="btn-primary">📝 Crear Cuenta</a>
+        </div>
+    </header>
+
+    <main style="max-width: 520px; margin: 4rem auto; padding: 0 1.5rem;">
+        
+        <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-card);">
+            
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 55px; height: 55px; background: rgba(124, 58, 237, 0.1); color: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin: 0 auto 1rem; border: 2px solid rgba(124, 58, 237, 0.2);">
+                    🔑
+                </div>
+                <h1 style="font-size: 1.85rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">
+                    Portal de <span class="gradient-text">Alojadores</span>
+                </h1>
+                <p style="font-size: 0.92rem; color: var(--text-muted);">
+                    Ingresa con tu cuenta verificada para gestionar y publicar habitaciones.
+                </p>
+            </div>
+
+            <!-- Alerta informativa si fue redirigido al intentar publicar -->
+            <div th:if="${infoMsg}" style="background: rgba(124, 58, 237, 0.08); border: 1px solid #c084fc; color: #581c87; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.45;">
+                🛡️ <strong th:text="${infoMsg}"></strong>
+            </div>
+
+            <!-- Alerta de credenciales incorrectas -->
+            <div th:if="${errorMsg}" style="background: #fef2f2; border: 1px solid #f87171; color: #b91c1c; padding: 0.9rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem; font-weight: 600;">
+                ⚠️ <span th:text="${errorMsg}"></span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="filter-group" style="margin-bottom: 1.25rem;">
+                    <label class="filter-label">Correo Electrónico Registrado</label>
+                    <input type="email" name="correo" required placeholder="tuemail@ejemplo.com" class="form-input" autofocus>
+                </div>
+
+                <div class="filter-group" style="margin-bottom: 1.75rem;">
+                    <label class="filter-label">Contraseña</label>
+                    <input type="password" name="password" required placeholder="••••••••" class="form-input">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem;">
+                    🔓 Iniciar Sesión y Acceder
+                </button>
+            </form>
+
+            <!-- Acceso rápido de demostración -->
+            <div style="margin-top: 1.75rem; background: #fbfbfe; border: 1px dashed #cbd5e1; border-radius: var(--radius-sm); padding: 1rem; font-size: 0.82rem; color: var(--text-sub);">
+                <div style="font-weight: 700; color: #7c3aed; margin-bottom: 0.25rem;">💡 Cuenta de Prueba Pre-verificada:</div>
+                <div><strong>Correo:</strong> rosalba@viveu.com</div>
+                <div><strong>Clave:</strong> 123456</div>
+                <div style="margin-top: 0.35rem; color: var(--text-muted); font-size: 0.76rem;">(Doña Rosalba Méndez • Arrendadora Verificada UdeC)</div>
+            </div>
+
+            <div style="text-align: center; margin-top: 1.75rem; border-top: 1px solid var(--border-subtle); padding-top: 1.25rem; font-size: 0.88rem; color: var(--text-sub);">
+                ¿Aún no tienes cuenta verificada? <br>
+                <a th:href="@{/registro-alojador}" style="color: #7c3aed; font-weight: 700; text-decoration: none; margin-top: 0.25rem; display: inline-block;">
+                    👉 Regístrate aquí y sube tus documentos
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>ViveU Cartagena • Universidad de Cartagena 2026</p>
+    </footer>
+
+</body>
+</html>

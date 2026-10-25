@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro y Verificación de Alojador | ViveU Cartagena</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header con Logo Centrado -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link">← Catálogo Estudiantil</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <a th:href="@{/login}" class="btn-outline">🔑 Ya tengo cuenta</a>
+        </div>
+    </header>
+
+    <main style="max-width: 860px; margin: 3rem auto; padding: 0 1.5rem;">
+        
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div class="hero-pill" style="background: rgba(124, 58, 237, 0.08); border-color: var(--primary); color: #7c3aed;">
+                🛡️ Filtro de Seguridad ViveU • Protección a la Comunidad Universitaria
+            </div>
+            <h1 style="font-size: 2.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+                Crea tu Cuenta de <span class="gradient-text">Alojador Verificado</span>
+            </h1>
+            <p style="color: var(--text-muted); max-width: 680px; margin: 0 auto; font-size: 1rem; line-height: 1.5;">
+                Para erradicar anuncios falsos y garantizar la seguridad de los estudiantes de la Universidad de Cartagena, todos los propietarios pasan por un proceso de verificación de identidad antes de publicar.
+            </p>
+        </div>
+
+        <!-- Alertas de error si ya existe correo o cédula -->
+        <div th:if="${errorCorreo}" style="background: #fef2f2; border: 1px solid #f87171; color: #b91c1c; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-weight: 600;">
+            ⚠️ <span th:text="${errorCorreo}"></span>
+        </div>
+        <div th:if="${errorCedula}" style="background: #fef2f2; border: 1px solid #f87171; color: #b91c1c; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-weight: 600;">
+            ⚠️ <span th:text="${errorCedula}"></span>
+        </div>
+
+        <form th:action="@{/registro-alojador}" th:object="${nuevoAlojador}" method="post" id="formRegistroAlojador"
+              style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-card);">
+            
+            <!-- PASO 1: DATOS DE ACCESO -->
+            <div style="margin-bottom: 2.5rem;">
+                <h3 style="color: #7c3aed; font-size: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>👤</span> 1. Información de la Cuenta y Contacto
+                </h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div class="filter-group" style="grid-column: 1 / -1;">
+                        <label class="filter-label">Nombre y Apellidos Completos (Como figura en tu cédula) *</label>
+                        <input type="text" th:field="*{nombreCompleto}" required placeholder="Ej: Rosalba Méndez Castillo" class="form-input">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Correo Electrónico (Será tu usuario de acceso) *</label>
+                        <input type="email" th:field="*{correo}" required placeholder="tuemail@ejemplo.com" class="form-input">
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Contraseña de Acceso *</label>
+                        <input type="password" th:field="*{password}" required placeholder="Mínimo 6 caracteres" class="form-input">
+                    </div>
+
+                    <div class="filter-group" style="grid-column: 1 / -1;">
+                        <label class="filter-label">Número de WhatsApp de Contacto *</label>
+                        <input type="text" th:field="*{telefonoWhatsapp}" required placeholder="Ej: +57 312 458 9231" class="form-input">
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Los estudiantes se comunicarán a este número una vez vean tu alojamiento en el catálogo.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 2: FILTROS Y REQUISITOS DE IDENTIDAD OBLIGATORIOS -->
+            <div style="margin-bottom: 2.5rem; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: var(--radius-md); padding: 1.75rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 style="color: #4c1d95; font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📋</span> 2. Verificación de Identidad Oficial (Cédula & Rostro)
+                    </h3>
+                    <span style="font-size: 0.75rem; background: #7c3aed; color: white; padding: 0.2rem 0.6rem; border-radius: var(--radius-full); font-weight: 700;">
+                        Obligatorio por Seguridad
+                    </span>
+                </div>
+                
+                <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 1.5rem; line-height: 1.45;">
+                    Solicitamos tu documento y fotografía para certificar que eres una persona real y responsable del inmueble. Esta información está protegida bajo la Ley 1581 de Protección de Datos Personales en Colombia.
+                </p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                    <div class="filter-group">
+                        <label class="filter-label">Tipo de Documento *</label>
+                        <select th:field="*{tipoDocumento}" class="form-select" required>
+                            <option value="Cédula de Ciudadanía">Cédula de Ciudadanía (C.C.)</option>
+                            <option value="Cédula de Extranjería">Cédula de Extranjería (C.E.)</option>
+                            <option value="Pasaporte">Pasaporte Oficial</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Número de Documento *</label>
+                        <input type="text" th:field="*{numeroCedula}" required placeholder="Ej: 45892104" class="form-input">
+                    </div>
+
+                    <div class="filter-group" style="grid-column: 1 / -1;">
+                        <label class="filter-label">Dirección de Residencia Personal en Cartagena *</label>
+                        <input type="text" th:field="*{direccionResidencia}" required placeholder="Ej: Barrio Zaragocilla, Calle 30 # 50-25" class="form-input">
+                    </div>
+
+                    <!-- SUBIDA DE FOTO DE ROSTRO (SELFIE) CON PREVIEW -->
+                    <div class="filter-group">
+                        <label class="filter-label">📸 Foto de tu Rostro (Selfie Clara) *</label>
+                        <div style="border: 2px dashed #c084fc; background: #ffffff; border-radius: var(--radius-sm); padding: 1rem; text-align: center; cursor: pointer;"
+                             onclick="document.getElementById('inputFotoRostro').click()">
+                            <img id="previewRostro" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80" 
+                                 style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 3px solid #7c3aed; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);">
+                            <div style="font-size: 0.82rem; font-weight: 700; color: #7c3aed;">Subir o cambiar foto de rostro</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">PNG o JPG (Rostro visible sin gafas oscuras)</div>
+                        </div>
+                        <input type="file" id="inputFotoRostro" accept="image/*" style="display: none;" onchange="cargarPreview(this, 'previewRostro', 'fotoRostroData')">
+                        <input type="hidden" name="fotoRostroData" id="fotoRostroData">
+                    </div>
+
+                    <!-- SUBIDA DE FOTO DE CÉDULA CON PREVIEW -->
+                    <div class="filter-group">
+                        <label class="filter-label">🪪 Foto de tu Cédula (Frente del Documento) *</label>
+                        <div style="border: 2px dashed #c084fc; background: #ffffff; border-radius: var(--radius-sm); padding: 1rem; text-align: center; cursor: pointer;"
+                             onclick="document.getElementById('inputFotoCedula').click()">
+                            <img id="previewCedula" src="https://images.unsplash.com/photo-1589330694653-dad6bc0140ad?auto=format&fit=crop&w=500&q=80" 
+                                 style="width: 130px; height: 85px; border-radius: var(--radius-sm); object-fit: cover; margin-bottom: 0.5rem; border: 2px solid #7c3aed; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.15);">
+                            <div style="font-size: 0.82rem; font-weight: 700; color: #7c3aed;">Subir foto de la cédula</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Imagen legible donde se aprecie tu nombre y número</div>
+                        </div>
+                        <input type="file" id="inputFotoCedula" accept="image/*" style="display: none;" onchange="cargarPreview(this, 'previewCedula', 'fotoCedulaData')">
+                        <input type="hidden" name="fotoCedulaData" id="fotoCedulaData">
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 3: DECLARACIÓN Y COMPROMISO ÉTICO -->
+            <div style="margin-bottom: 2rem; border-top: 1px solid var(--border-subtle); padding-top: 1.5rem;">
+                <h3 style="color: #0f172a; font-size: 1.1rem; margin-bottom: 1rem;">
+                    ⚖️ 3. Declaración de Veracidad y Compromiso
+                </h3>
+
+                <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <label class="checkbox-label" style="align-items: flex-start;">
+                        <input type="checkbox" required checked style="margin-top: 4px; accent-color: #7c3aed;">
+                        <span style="font-size: 0.85rem; line-height: 1.45;">
+                            <strong>Declaración Juramentada:</strong> Certifico que los datos, documento y fotografías suministrados corresponden legalmente a mi persona y que tengo autorización legítima para arrendar los inmuebles que publique.
+                        </span>
+                    </label>
+
+                    <label class="checkbox-label" style="align-items: flex-start;">
+                        <input type="checkbox" required checked style="margin-top: 4px; accent-color: #7c3aed;">
+                        <span style="font-size: 0.85rem; line-height: 1.45;">
+                            <strong>Compromiso Universitario ViveU:</strong> Me comprometo a brindar un ambiente seguro, de respeto, libre de abusos y con información real sobre precios y servicios públicos para los estudiantes de la Universidad de Cartagena.
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1.05rem;">
+                🚀 Crear Cuenta y Verificarme como Alojador
+            </button>
+
+            <div style="text-align: center; margin-top: 1.25rem; font-size: 0.9rem; color: var(--text-sub);">
+                ¿Ya completaste tu registro anteriormente? <a th:href="@{/login}" style="color: #7c3aed; font-weight: 700; text-decoration: none;">Inicia sesión aquí</a>
+            </div>
+        </form>
+    </main>
+
+    <footer class="footer">
+        <p>ViveU Cartagena • Plataforma de Alojamiento Universitario 2026</p>
+    </footer>
+
+    <script>
+        function cargarPreview(input, idImgPreview, idInputHidden) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(idImgPreview).src = e.target.result;
+                    document.getElementById(idInputHidden).value = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>

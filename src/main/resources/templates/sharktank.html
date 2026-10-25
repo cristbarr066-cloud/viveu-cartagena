@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Negocio | ViveU Cartagena</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Barra de Navegación con Logo Centrado y Protagonista -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link">← Ver Catálogo en Vivo</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU - Encuentra tu espacio, empieza tu proceso" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div th:if="${alojadorLogueado != null}" style="display: flex; align-items: center; gap: 0.6rem;">
+                <a th:href="@{/mis-alojamientos}" class="btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;">📋 Mi Panel</a>
+                <a th:href="@{/logout}" class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Salir</a>
+            </div>
+            <div th:if="${alojadorLogueado == null}">
+                <a th:href="@{/publicar}" class="btn-primary">➕ Publicar Habitación</a>
+            </div>
+        </div>
+    </header>
+
+    <main style="max-width: 1050px; margin: 3rem auto; padding: 0 1.5rem;">
+        
+        <!-- Header del Proyecto -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <div class="hero-pill" style="background: rgba(124, 58, 237, 0.08); border-color: var(--primary); color: #7c3aed;">
+                🎓 Universidad de Cartagena • Administración Industrial
+            </div>
+            <h1 style="font-size: 2.75rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+                Propuesta de Valor y <span class="gradient-text">Modelo de Negocio</span>
+            </h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 700px; margin: 0 auto;">
+                Solución tecnológica enfocada en optimizar el acceso a la vivienda para la comunidad universitaria en Cartagena.
+            </p>
+            <div style="margin-top: 1rem; color: var(--text-sub); font-size: 0.95rem;">
+                <strong>Equipo Desarrollador:</strong> Verónica Arrieta • Maydee Hernández • Luisa Cervantes
+            </div>
+        </div>
+
+        <!-- 1. El Pitch de la Iniciativa -->
+        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(99, 102, 241, 0.08)); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: var(--radius-lg); padding: 2.25rem; margin-bottom: 3rem; box-shadow: var(--shadow-card);">
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: #0284c7; font-size: 1.35rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 800;">
+                    <span>🎙️</span> Pitch del Proyecto
+                </h3>
+            </div>
+            <blockquote style="font-size: 1.15rem; font-style: italic; line-height: 1.75; color: #1e293b; border-left: 4px solid #0284c7; padding-left: 1.25rem;">
+                "¿Eres estudiante universitario en Cartagena y te cuesta encontrar una habitación económica, segura y cercana a tu sede? Para solucionar las semanas de búsqueda informal en redes y el riesgo de estafas, creamos <strong>ViveU</strong>: una plataforma digital diseñada especialmente para la vida universitaria. Centralizamos habitaciones verificadas con precios transparentes ($300.000 a $500.000 COP), servicios incluidos y proximidad real a las sedes de la Universidad de Cartagena. Nuestra propuesta de valor ahorra tiempo mediante comparación técnica simultánea y recomendaciones personalizadas. A diferencia de los grupos dispersos de redes sociales, ofrecemos datos auditados y normas claras. Monetizamos mediante publicaciones destacadas y planes de visibilidad para propietarios interesados en arrendatarios estudiantiles responsables. ViveU transforma la incertidumbre de mudarse en una experiencia ágil y segura."
+            </blockquote>
+        </div>
+
+        <!-- 2. Matriz de Síntesis del Negocio -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+            <div class="metric-card">
+                <h4 style="color: #dc2626; font-size: 1.1rem; margin-bottom: 0.5rem;">⚠️ La Oportunidad</h4>
+                <p style="font-size: 0.9rem; color: var(--text-sub);">
+                    La búsqueda actual toma hasta 2 semanas. Hay información dispersa en grupos informales, poca claridad en costos adicionales y desconfianza en la veracidad de los avisos.
+                </p>
+            </div>
+            <div class="metric-card">
+                <h4 style="color: #0284c7; font-size: 1.1rem; margin-bottom: 0.5rem;">🎯 Clientes Objetivo</h4>
+                <p style="font-size: 0.9rem; color: var(--text-sub);">
+                    <strong>Estudiantes:</strong> Jóvenes foráneos de municipios de Bolívar y la región Caribe que inician sus carreras en Cartagena.<br>
+                    <strong>Arrendadores:</strong> Familias y dueños de inmuebles que buscan inquilinos universitarios serios.
+                </p>
+            </div>
+            <div class="metric-card">
+                <h4 style="color: #059669; font-size: 1.1rem; margin-bottom: 0.5rem;">💡 Solución y Diferencial</h4>
+                <p style="font-size: 0.9rem; color: var(--text-sub);">
+                    Catálogo organizado con comparador simultáneo por sedes (Zaragocilla, Piedra de Bolívar, San Agustín), información transparente y verificación de publicaciones.
+                </p>
+            </div>
+            <div class="metric-card">
+                <h4 style="color: #d97706; font-size: 1.1rem; margin-bottom: 0.5rem;">💵 Fuentes de Ingreso</h4>
+                <p style="font-size: 0.9rem; color: var(--text-sub);">
+                    Tarifa de visibilidad ($15.000 COP) para arrendadores que deseen destacar su inmueble en las primeras posiciones y recibir solicitudes prioritarias.
+                </p>
+            </div>
+        </div>
+
+        <!-- 3. Preguntas de Validación del Negocio -->
+        <section style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 3rem; box-shadow: var(--shadow-card);">
+            <h3 style="color: #0f172a; font-size: 1.65rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 800;">
+                <span>📋</span> Fundamentos y Validación del Proyecto
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                
+                <details style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0;" open>
+                    <summary style="font-weight: 700; color: #0284c7; cursor: pointer; font-size: 1.05rem;">
+                        1. ¿Por qué este problema merece una solución?
+                    </summary>
+                    <p style="color: var(--text-sub); margin-top: 0.75rem; font-size: 0.92rem; line-height: 1.6;">
+                        En Cartagena, cientos de jóvenes foráneos llegan cada semestre sin conocer la ciudad ni las rutas seguras. Perder semanas buscando alojamiento en grupos informales genera estrés, sobrecostos y riesgos de acuerdos engañosos. ViveU organiza y agiliza este proceso para la comunidad estudiantil.
+                    </p>
+                </details>
+
+                <details style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0;">
+                    <summary style="font-weight: 700; color: #0284c7; cursor: pointer; font-size: 1.05rem;">
+                        2. ¿Quién pagaría por el servicio y por qué?
+                    </summary>
+                    <p style="color: var(--text-sub); margin-top: 0.75rem; font-size: 0.92rem; line-height: 1.6;">
+                        Los <strong>propietarios y arrendadores</strong>. Una habitación vacía durante un mes genera pérdidas considerables. Contar con un canal directo para llegar a estudiantes calificados hace que una tarifa accesible de publicación destacada resulte muy atractiva.
+                    </p>
+                </details>
+
+                <details style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0;">
+                    <summary style="font-weight: 700; color: #0284c7; cursor: pointer; font-size: 1.05rem;">
+                        3. ¿Qué alcance funcional tiene esta versión?
+                    </summary>
+                    <p style="color: var(--text-sub); margin-top: 0.75rem; font-size: 0.92rem; line-height: 1.6;">
+                        El prototipo web integra la base de datos de habitaciones en sectores universitarios de Cartagena, el sistema de filtros por sede y presupuesto, la herramienta de comparación en paralelo y la calculadora de costos de transporte. El contacto con el propietario se canaliza directamente vía WhatsApp.
+                    </p>
+                </details>
+
+                <details style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0;">
+                    <summary style="font-weight: 700; color: #0284c7; cursor: pointer; font-size: 1.05rem;">
+                        4. ¿Cómo se validó el interés de los usuarios?
+                    </summary>
+                    <p style="color: var(--text-sub); margin-top: 0.75rem; font-size: 0.92rem; line-height: 1.6;">
+                        Mediante encuestas a estudiantes que vivieron la experiencia de buscar cuarto en Cartagena, identificando que el precio ($300k - $500k COP), la seguridad del sector y la cercanía a las sedes son los factores decisivos para elegir un lugar.
+                    </p>
+                </details>
+
+                <details style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0;">
+                    <summary style="font-weight: 700; color: #0284c7; cursor: pointer; font-size: 1.05rem;">
+                        5. ¿Cuál es el siguiente paso para implementar la propuesta?
+                    </summary>
+                    <p style="color: var(--text-sub); margin-top: 0.75rem; font-size: 0.92rem; line-height: 1.6;">
+                        Realizar una prueba piloto en barrios aledaños como Zaragocilla y Los Cerros con los primeros arrendadores aliados y presentar la herramienta a estudiantes de nuevo ingreso en la semana de inducción.
+                    </p>
+                </details>
+
+            </div>
+        </section>
+
+        <!-- 4. Aprendizajes del Proyecto -->
+        <section style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2.5rem; margin-bottom: 3rem; box-shadow: var(--shadow-card);">
+            <h3 style="color: #0f172a; font-size: 1.55rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 800;">
+                <span>💡</span> Aprendizajes Principales del Proceso
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <div style="background: #f8fafc; padding: 1.35rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0; border-left: 4px solid #0284c7;">
+                    <strong style="color: #0284c7; font-size: 1rem;">1. Validar la necesidad antes de construir</strong>
+                    <p style="color: var(--text-sub); font-size: 0.88rem; margin-top: 0.5rem; line-height: 1.5;">
+                        Descubrimos que un prototipo ágil permite comprobar rápidamente el interés de los usuarios y ajustar el servicio sin incurrir en grandes inversiones iniciales.
+                    </p>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.35rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0; border-left: 4px solid #059669;">
+                    <strong style="color: #059669; font-size: 1rem;">2. La transparencia genera confianza</strong>
+                    <p style="color: var(--text-sub); font-size: 0.88rem; margin-top: 0.5rem; line-height: 1.5;">
+                        Organizar la información, transparentar si los servicios están incluidos y detallar normas de convivencia resuelve la principal queja de los estudiantes frente a las redes sociales.
+                    </p>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.35rem; border-radius: var(--radius-md); border: 1px solid #e2e8f0; border-left: 4px solid #d97706;">
+                    <strong style="color: #d97706; font-size: 1rem;">3. Enfoque hiperlocal</strong>
+                    <p style="color: var(--text-sub); font-size: 0.88rem; margin-top: 0.5rem; line-height: 1.5;">
+                        En Cartagena, la cercanía a sedes como Zaragocilla o Piedra de Bolívar y el costo del transporte diario tienen un impacto directo en el presupuesto real del estudiante.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA volver -->
+        <div style="text-align: center; margin-bottom: 4rem;">
+            <a th:href="@{/}" class="btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                🚀 Explorar la Plataforma Interactiva ViveU
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>ViveU Cartagena • Universidad de Cartagena 2026</p>
+    </footer>
+
+</body>
+</html>

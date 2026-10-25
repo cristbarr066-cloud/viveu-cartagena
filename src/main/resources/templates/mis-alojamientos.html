@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Alojador | ViveU Cartagena</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header con Logo Centrado y Estado de Sesión -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link">← Catálogo Estudiantil</a>
+            <a th:href="@{/publicar}" class="nav-link">➕ Publicar Habitación</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <img th:src="${alojadorLogueado.fotoRostroUrl}" alt="Foto Rostro" 
+                     style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+                <div style="text-align: left; line-height: 1.2;">
+                    <strong style="font-size: 0.85rem; color: #0f172a;" th:text="${alojadorLogueado.nombreCompleto}"></strong>
+                    <div style="font-size: 0.72rem; color: #059669; font-weight: 700;">✓ Verificado</div>
+                </div>
+            </div>
+            <a th:href="@{/logout}" class="btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; margin-left: 0.5rem;">
+                🚪 Salir
+            </a>
+        </div>
+    </header>
+
+    <!-- Notificación de bienvenida o publicación exitosa -->
+    <div th:if="${param.publicado}" style="background: rgba(16, 185, 129, 0.12); border-bottom: 1px solid #10b981; color: #065f46; text-align: center; padding: 0.85rem; font-size: 0.95rem; font-weight: 600;">
+        🎉 ¡Tu habitación fue publicada con éxito! Ya se encuentra visible para los estudiantes con el sello <strong>✓ Verificado ViveU</strong>.
+    </div>
+
+    <main style="max-width: 1100px; margin: 3rem auto; padding: 0 1.5rem;">
+        
+        <!-- TARJETA DEL PERFIL VERIFICADO DEL ALOJADOR -->
+        <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-card); margin-bottom: 2.5rem; display: flex; gap: 2rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            
+            <div style="display: flex; gap: 1.5rem; align-items: center;">
+                <div style="position: relative;">
+                    <img th:src="${alojadorLogueado.fotoRostroUrl}" alt="Foto Alojador" 
+                         style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #7c3aed; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);">
+                    <span style="position: absolute; bottom: 0; right: 0; background: #059669; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white;">
+                        ✓
+                    </span>
+                </div>
+
+                <div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.35rem;">
+                        <h2 style="font-size: 1.6rem; color: #0f172a; margin: 0;" th:text="${alojadorLogueado.nombreCompleto}"></h2>
+                        <span class="badge-verified" style="font-size: 0.75rem;">✓ Alojador Certificado</span>
+                    </div>
+
+                    <div style="color: var(--text-sub); font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.2rem;">
+                        <div>🪪 <strong th:text="${alojadorLogueado.tipoDocumento}"></strong>: <span th:text="${alojadorLogueado.numeroCedula}"></span></div>
+                        <div>📱 <strong>WhatsApp:</strong> <span th:text="${alojadorLogueado.telefonoWhatsapp}"></span></div>
+                        <div>📍 <strong>Residencia en Cartagena:</strong> <span th:text="${alojadorLogueado.direccionResidencia}"></span></div>
+                        <div>✉️ <strong>Correo:</strong> <span th:text="${alojadorLogueado.correo}"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-end;">
+                <div style="background: rgba(124, 58, 237, 0.08); border: 1px solid #c084fc; border-radius: var(--radius-sm); padding: 0.75rem 1.25rem; text-align: right;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Estado de Seguridad</div>
+                    <div style="font-size: 1rem; font-weight: 800; color: #7c3aed;">🛡️ 100% Verificado</div>
+                </div>
+
+                <a th:href="@{/publicar}" class="btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                    ➕ Publicar Nueva Habitación
+                </a>
+            </div>
+        </div>
+
+        <!-- LISTADO DE HABITACIONES DEL ALOJADOR -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h3 style="font-size: 1.5rem; color: #0f172a; margin: 0;">Mis Habitaciones Publicadas</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    Gestiona los cuartos activos vinculados a tu perfil verificado.
+                </p>
+            </div>
+            <span style="font-size: 0.95rem; font-weight: 700; color: #7c3aed; background: #f5f3ff; padding: 0.35rem 0.85rem; border-radius: var(--radius-full);"
+                  th:text="${totalMisAlojamientos + ' alojamiento(s)'}"></span>
+        </div>
+
+        <!-- Si tiene habitaciones -->
+        <div th:if="${!misAlojamientos.isEmpty()}" class="cards-grid">
+            <div th:each="a : ${misAlojamientos}" class="alojamiento-card">
+                <div class="card-image-wrap">
+                    <img th:src="${a.imagenUrl}" class="card-image" alt="habitación">
+                    <div class="card-badges">
+                        <span th:if="${a.destacado}" class="badge-featured">⭐ Destacado VIP</span>
+                        <span class="badge-verified">✓ Verificado ViveU</span>
+                    </div>
+                    <div class="card-price-tag">
+                        $<span th:text="${#numbers.formatDecimal(a.precioMensual, 0, 'POINT', 0, 'COMMA')}"></span>
+                        <span>COP/mes</span>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="card-location">
+                        📍 <span th:text="${a.sector}"></span> • A <span th:text="${a.distanciaMinutos}"></span> min de <span th:text="${a.sedeCercana}"></span>
+                    </div>
+                    <h3 class="card-title" th:text="${a.titulo}"></h3>
+                    <p class="card-desc" th:text="${a.descripcion}"></p>
+
+                    <div class="card-amenities">
+                        <span class="amenity-pill" th:text="${a.tipoHabitacion}"></span>
+                        <span th:if="${a.incluyeServicios}" class="amenity-pill">💡 Servicios incl.</span>
+                        <span th:if="${a.wifiFibraOptica}" class="amenity-pill">📶 Wi-Fi</span>
+                        <span th:if="${a.aireAcondicionado}" class="amenity-pill">❄️ Aire A/A</span>
+                        <span th:if="${a.abanico}" class="amenity-pill">🌀 Abanico</span>
+                    </div>
+
+                    <div class="card-footer">
+                        <span style="font-size: 0.82rem; color: #059669; font-weight: 700;">🟢 Anuncio Activo</span>
+                        <a th:href="@{/}" class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                            👁️ Ver en Catálogo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Si aún no tiene habitaciones publicadas -->
+        <div th:if="${misAlojamientos.isEmpty()}" 
+             style="background: #ffffff; border: 2px dashed #cbd5e1; border-radius: var(--radius-lg); padding: 3.5rem 2rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🏡</div>
+            <h3 style="font-size: 1.35rem; color: #0f172a; margin-bottom: 0.5rem;">Aún no has publicado habitaciones</h3>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 0.92rem;">
+                Tu identidad ya se encuentra verificada. Ahora puedes subir la información de tus cuartos para que los estudiantes de la Universidad de Cartagena puedan contactarte.
+            </p>
+            <a th:href="@{/publicar}" class="btn-primary" style="padding: 0.85rem 1.75rem; font-size: 1rem;">
+                🚀 Publicar Mi Primera Habitación
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>ViveU Cartagena • Portal Oficial de Arrendadores Verificados 2026</p>
+    </footer>
+
+</body>
+</html>

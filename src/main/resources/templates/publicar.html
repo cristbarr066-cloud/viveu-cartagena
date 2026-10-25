@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Habitación | ViveU Cartagena</title>
+    <!-- Leaflet Maps CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Barra de Navegación -->
+    <!-- Barra de Navegación con Estado de Alojador Verificado -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a th:href="@{/}" class="nav-link">← Catálogo Estudiantil</a>
+            <a th:href="@{/mis-alojamientos}" class="nav-link">📋 Mis Alojamientos</a>
+        </div>
+
+        <a th:href="@{/}" class="navbar-brand-centered" title="ViveU - Inicio">
+            <img th:src="@{/images/logo-viveu.png}" alt="ViveU" class="brand-logo-img">
+        </a>
+
+        <div class="nav-right">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <img th:src="${alojadorLogueado.fotoRostroUrl}" alt="Foto" 
+                     style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+                <div style="text-align: left; line-height: 1.2;">
+                    <strong style="font-size: 0.85rem; color: #0f172a;" th:text="${alojadorLogueado.nombreCompleto}"></strong>
+                    <div style="font-size: 0.72rem; color: #059669; font-weight: 700;">✓ Verificado</div>
+                </div>
+            </div>
+            <a th:href="@{/logout}" class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-left: 0.5rem;">
+                Salir
+            </a>
+        </div>
+    </header>
+
+    <!-- Notificación si acaba de registrarse -->
+    <div th:if="${param.bienvenido}" style="background: rgba(124, 58, 237, 0.1); border-bottom: 1px solid #c084fc; color: #581c87; text-align: center; padding: 0.85rem; font-size: 0.95rem; font-weight: 600;">
+        🎉 ¡Cuenta creada y verificada con éxito! Ya puedes publicar tu primer alojamiento en Cartagena.
+    </div>
+
+    <main style="max-width: 850px; margin: 3rem auto; padding: 0 1.5rem;">
+        
+        <!-- Banner de Arrendador Verificado -->
+        <div style="background: #ffffff; border: 1px solid #e9d5ff; border-radius: var(--radius-md); padding: 1.15rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-sm); flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <img th:src="${alojadorLogueado.fotoRostroUrl}" alt="Foto" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid #7c3aed;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                        <strong style="color: #0f172a; font-size: 0.95rem;" th:text="${alojadorLogueado.nombreCompleto}"></strong>
+                        <span class="badge-verified" style="font-size: 0.7rem;">✓ Verificado ViveU</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem;">
+                        Cédula: <strong th:text="${alojadorLogueado.numeroCedula}"></strong> • WhatsApp: <strong th:text="${alojadorLogueado.telefonoWhatsapp}"></strong>
+                    </div>
+                </div>
+            </div>
+            <a th:href="@{/mis-alojamientos}" class="btn-outline" style="font-size: 0.82rem; padding: 0.4rem 0.85rem;">
+                📋 Ver Mis Alojamientos
+            </a>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <h1 style="font-size: 2.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+                Publicar Nueva Habitación en <span class="gradient-text">ViveU</span>
+            </h1>
+            <p style="color: var(--text-muted); max-width: 650px; margin: 0 auto; font-size: 0.95rem;">
+                Tu anuncio aparecerá automáticamente con el sello <strong>✓ Verificado ViveU</strong> para generar confianza inmediata en los estudiantes.
+            </p>
+        </div>
+
+        <form th:action="@{/publicar}" th:object="${nuevoAlojamiento}" method="post" 
+              style="background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-card);">
+            
+            <h3 style="color: var(--primary); font-size: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📝</span> 1. Información General del Alojamiento
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">Título del Anuncio</label>
+                    <input type="text" th:field="*{titulo}" required placeholder="Ej: Habitación amoblada a 5 min de Zaragocilla" class="form-input">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Precio Mensual (COP)</label>
+                    <input type="number" th:field="*{precioMensual}" required placeholder="Ej: 380000" class="form-input">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sector o Barrio en Cartagena</label>
+                    <input type="text" th:field="*{sector}" required placeholder="Ej: Zaragocilla, Los Cerros, Amberes" class="form-input">
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">Dirección del Alojamiento en Cartagena</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" th:field="*{direccion}" id="inputDireccion" required placeholder="Ej: Calle 30 # 50-25, Zaragocilla" class="form-input">
+                        <button type="button" class="btn-outline" id="btnBuscarDireccion" style="white-space: nowrap; font-size: 0.85rem;">
+                            📍 Ubicar en Mapa
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mapa Interactivo con Marcador Arrastrable -->
+                <div style="grid-column: 1 / -1; margin: 0.5rem 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <label class="filter-label" style="font-weight: 700;">
+                            🗺️ Ubicación Exacta (Arrastra el pin para ajustar la posición):
+                        </label>
+                        <span id="badgeCalculoDistancia" style="font-size: 0.8rem; font-weight: 700; color: #7c3aed; background: rgba(124, 58, 237, 0.08); padding: 0.2rem 0.6rem; border-radius: var(--radius-full);">
+                            📍 Calculando distancia...
+                        </span>
+                    </div>
+                    <div id="mapaPublicar" style="height: 290px; width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm); z-index: 10;"></div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">
+                        💡 Puedes arrastrar el marcador azul directamente al punto exacto donde queda la habitación. El sistema calculará la distancia y el tiempo automáticamente.
+                    </p>
+
+                    <!-- Coordenadas Ocultas que se envían al backend -->
+                    <input type="hidden" th:field="*{latitud}" id="inputLatitud" value="10.3995">
+                    <input type="hidden" th:field="*{longitud}" id="inputLongitud" value="-75.4975">
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Sede Universitaria Más Cercana</label>
+                    <select th:field="*{sedeCercana}" id="selectSedeCercana" class="form-select" required>
+                        <option value="Sede Zaragocilla (Salud)">Sede Zaragocilla (Salud / Medicina)</option>
+                        <option value="Sede Piedra de Bolívar (Ingeniería)">Sede Piedra de Bolívar (Ingeniería)</option>
+                        <option value="Sede Claustro San Agustín (Centro)">Sede Claustro San Agustín (Centro)</option>
+                        <option value="Sede San Pablo">Sede San Pablo</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Distancia a la Sede (Calculada Automáticamente)</label>
+                    <div style="position: relative;">
+                        <input type="number" th:field="*{distanciaMinutos}" id="inputDistanciaMinutos" required readonly class="form-input" style="background: #f1f5f9; font-weight: 700; color: #7c3aed; padding-right: 60px;">
+                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">min a pie</span>
+                    </div>
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">Tipo de Habitación</label>
+                    <select th:field="*{tipoHabitacion}" class="form-select" required>
+                        <option value="Individual con baño privado">Individual con baño privado</option>
+                        <option value="Individual con baño compartido">Individual con baño compartido</option>
+                        <option value="Compartida doble">Compartida doble (Económica)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">Descripción Detallada</label>
+                    <textarea th:field="*{descripcion}" rows="3" class="form-input" placeholder="Describe el ambiente, mobiliario, ventilación y qué incluye el lugar..." style="resize: vertical;"></textarea>
+                </div>
+
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">URL de Imagen Fotográfica (Opcional, dejar vacío para usar imagen estándar)</label>
+                    <input type="url" th:field="*{imagenUrl}" placeholder="https://images.unsplash.com/..." class="form-input">
+                </div>
+            </div>
+
+            <h3 style="color: var(--primary); font-size: 1.25rem; margin: 2rem 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> 2. Servicios e Instalaciones
+            </h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{incluyeServicios}">
+                    <span>💡 Servicios incluidos (Luz/Agua/Gas)</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{wifiFibraOptica}">
+                    <span>📶 Wi-Fi Fibra Óptica</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{aireAcondicionado}">
+                    <span>❄️ Aire Acondicionado</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{abanico}">
+                    <span>🌀 Abanico de Techo</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{cocinaDisponible}">
+                    <span>🍳 Derecho a Cocina</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{zonaLavanderia}">
+                    <span>🧺 Zona de Lavandería</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{permiteVisitas}">
+                    <span>👥 Permite Visitas Familiares</span>
+                </label>
+            </div>
+
+            <h3 style="color: var(--primary); font-size: 1.25rem; margin: 2rem 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📋</span> 3. Datos de Contacto y Convivencia
+            </h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem;">
+                <div class="filter-group">
+                    <label class="filter-label">Nombre del Propietario (Verificado con Cédula) ✓</label>
+                    <input type="text" th:field="*{nombrePropietario}" required readonly class="form-input" style="background: #f8fafc; color: #4c1d95; font-weight: 700;">
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 600;">✓ Vinculado a tu cuenta verificada ViveU</span>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Número de WhatsApp de Contacto (Verificado) ✓</label>
+                    <input type="text" th:field="*{telefonoContacto}" required readonly class="form-input" style="background: #f8fafc; color: #4c1d95; font-weight: 700;">
+                    <span style="font-size: 0.75rem; color: #059669; font-weight: 600;">✓ Canal directo para los estudiantes</span>
+                </div>
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label class="filter-label">Normas Básicas de Convivencia</label>
+                    <input type="text" th:field="*{normasConvivencia}" placeholder="Ej: No fumadores, ambiente de estudio, silencio a partir de las 10:00 PM" class="form-input">
+                </div>
+            </div>
+
+            <!-- Opciones de Visibilidad -->
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="color: #b45309; font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⭐</span> Elige el Nivel de Visibilidad
+                </h4>
+                <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 1rem;">
+                    Las habitaciones destacadas se muestran en las primeras posiciones y reciben en promedio 3 veces más contactos de estudiantes.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <label style="background: #ffffff; border: 1px solid var(--border-subtle); padding: 1.15rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; gap: 0.75rem; align-items: flex-start; box-shadow: var(--shadow-sm);">
+                        <input type="radio" name="planDestacado" value="false" checked style="margin-top: 4px; accent-color: var(--primary);">
+                        <div>
+                            <strong style="color: #0f172a; font-size: 0.95rem;">Publicación Estándar (Gratis)</strong>
+                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">Aparición regular en el catálogo después de la verificación del inmueble.</p>
+                        </div>
+                    </label>
+
+                    <label style="background: rgba(245, 158, 11, 0.08); border: 2px solid #d97706; padding: 1.15rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; gap: 0.75rem; align-items: flex-start; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.1);">
+                        <input type="radio" name="planDestacado" value="true" style="margin-top: 4px; accent-color: var(--accent-amber);">
+                        <div>
+                            <strong style="color: #b45309; font-size: 0.95rem;">Publicación Destacada ($15.000 COP)</strong>
+                            <p style="font-size: 0.82rem; color: var(--text-sub); margin-top: 0.25rem;">Insignia dorada, ubicación prioritaria en búsquedas y recomendaciones principales.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.9rem; font-size: 1rem;">
+                🚀 Publicar Alojamiento en ViveU
+            </button>
+        </form>
+    </main>
+
+    <footer class="footer">
+        <p>ViveU Cartagena • Universidad de Cartagena 2026</p>
+    </footer>
+
+    <!-- Leaflet Maps JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Coordenadas oficiales de las sedes de la Universidad de Cartagena
+        const SEDES_CARTAGENA = {
+            "Sede Zaragocilla (Salud)": { lat: 10.3985, lng: -75.4982, nombre: "Sede Zaragocilla (Medicina/Salud)" },
+            "Sede Piedra de Bolívar (Ingeniería)": { lat: 10.4072, lng: -75.5028, nombre: "Sede Piedra de Bolívar (Ingeniería)" },
+            "Sede Claustro San Agustín (Centro)": { lat: 10.4236, lng: -75.5498, nombre: "Sede Claustro San Agustín (Centro)" },
+            "Sede San Pablo": { lat: 10.3951, lng: -75.4970, nombre: "Sede San Pablo" }
+        };
+
+        let mapa, marcadorHabitacion, circuloSede;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarMapaPublicar();
+        });
+
+        function inicializarMapaPublicar() {
+            const latInicial = 10.3995;
+            const lngInicial = -75.4975;
+
+            mapa = L.map('mapaPublicar', {
+                center: [latInicial, lngInicial],
+                zoom: 16
+            });
+
+            // Capa 1: Google Maps Calles Oficial (con barrios, calles y puntos de Cartagena)
+            const googleStreets = L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                subdomains: ['0', '1', '2', '3'],
+                maxZoom: 20,
+                attribution: '&copy; Google Maps'
+            }).addTo(mapa);
+
+            // Capa 2: Google Maps Satélite Real (foto aérea con nombres de calles)
+            const googleSatellite = L.tileLayer('https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                subdomains: ['0', '1', '2', '3'],
+                maxZoom: 20,
+                attribution: '&copy; Google Maps Satélite'
+            });
+
+            // Capa 3: OpenStreetMap estándar
+            const osmStandard = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            });
+
+            // Selector interactivo de mapas (Google Calles / Satélite / OpenStreetMap)
+            L.control.layers({
+                "🗺️ Google Maps (Calles)": googleStreets,
+                "🛰️ Google Maps (Satélite)": googleSatellite,
+                "🌐 OpenStreetMap": osmStandard
+            }, null, { position: 'topright' }).addTo(mapa);
+
+            // Asegurar que las teselas carguen completamente sin zonas grises
+            setTimeout(() => {
+                mapa.invalidateSize();
+            }, 200);
+
+            // Marcador arrastrable de la habitación
+            const iconoCasa = L.divIcon({
+                className: 'custom-map-pin',
+                html: '<div style="background: #7c3aed; color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: grab;">🏠</div>',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+
+            marcadorHabitacion = L.marker([latInicial, lngInicial], {
+                draggable: true,
+                icon: iconoCasa
+            }).addTo(mapa);
+
+            marcadorHabitacion.bindPopup("<b>📍 Tu Habitación</b><br>Arrastra este marcador al punto exacto.").openPopup();
+
+            // Evento al arrastrar el pin
+            marcadorHabitacion.on('dragend', function (e) {
+                const posicion = e.target.getLatLng();
+                actualizarCoordenadasYDistancia(posicion.lat, posicion.lng);
+            });
+
+            // Evento al cambiar la sede seleccionada
+            document.getElementById('selectSedeCercana').addEventListener('change', () => {
+                const pos = marcadorHabitacion.getLatLng();
+                actualizarCoordenadasYDistancia(pos.lat, pos.lng);
+            });
+
+            // Botón buscar dirección escrita
+            document.getElementById('btnBuscarDireccion').addEventListener('click', buscarDireccionCartagena);
+            document.getElementById('inputDireccion').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    buscarDireccionCartagena();
+                }
+            });
+
+            // Cálculo inicial
+            actualizarCoordenadasYDistancia(latInicial, lngInicial);
+        }
+
+        function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function actualizarCoordenadasYDistancia(lat, lng) {
+            document.getElementById('inputLatitud').value = lat.toFixed(6);
+            document.getElementById('inputLongitud').value = lng.toFixed(6);
+
+            const sedeSeleccionada = document.getElementById('selectSedeCercana').value;
+            const datosSede = SEDES_CARTAGENA[sedeSeleccionada] || SEDES_CARTAGENA["Sede Zaragocilla (Salud)"];
+
+            const distanciaKm = calcularDistanciaKm(lat, lng, datosSede.lat, datosSede.lng);
+            // Ritmo promedio caminando en Cartagena: ~13.5 minutos por km
+            const minutos = Math.max(1, Math.round(distanciaKm * 13.5));
+
+            document.getElementById('inputDistanciaMinutos').value = minutos;
+            
+            const badge = document.getElementById('badgeCalculoDistancia');
+            if (badge) {
+                const metros = Math.round(distanciaKm * 1000);
+                badge.innerHTML = `🚶‍♂️ <strong>${minutos} min a pie</strong> (${metros < 1000 ? metros + ' m' : distanciaKm.toFixed(1) + ' km'} a la ${datosSede.nombre.split('(')[0].trim()})`;
+            }
+
+            // Dibujar o actualizar el icono de la Sede Universitaria en el mapa
+            if (circuloSede) mapa.removeLayer(circuloSede);
+            
+            const iconoUniversidad = L.divIcon({
+                className: 'custom-sede-pin',
+                html: '<div style="background: #1e3a8a; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.35); position: relative; cursor: pointer;">🎓<span style="position: absolute; bottom: -13px; background: #0f172a; color: #f59e0b; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 4px; white-space: nowrap; border: 1px solid #f59e0b; box-shadow: 0 2px 4px rgba(0,0,0,0.25);">UdeC</span></div>',
+                iconSize: [38, 38],
+                iconAnchor: [19, 19]
+            });
+
+            circuloSede = L.marker([datosSede.lat, datosSede.lng], {
+                icon: iconoUniversidad
+            }).addTo(mapa).bindPopup(`<b>🎓 ${datosSede.nombre}</b><br>Sede Oficial Universidad de Cartagena.`);
+        }
+
+        async function buscarDireccionCartagena() {
+            const dir = document.getElementById('inputDireccion').value;
+            if (!dir.trim()) return;
+
+            const query = encodeURIComponent(`${dir}, Cartagena, Colombia`);
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    mapa.setView([lat, lng], 16);
+                    marcadorHabitacion.setLatLng([lat, lng]);
+                    actualizarCoordenadasYDistancia(lat, lng);
+                } else {
+                    alert("No encontramos la dirección exacta en el mapa. Puedes arrastrar el marcador azul manualmente.");
+                }
+            } catch (e) {
+                console.error("Error al geocodificar", e);
+            }
+        }
+    </script>
+</body>
+</html>
